@@ -1,16 +1,21 @@
 <script lang="ts">
   import type { Snippet } from 'svelte';
+  import EmptyIllustration from '$lib/components/ui/EmptyIllustration.svelte';
+
+  type Variant = 'deadline' | 'document' | 'car' | 'person' | 'archive' | 'check';
 
   interface Props {
     title: string;
     subtitle?: string;
+    illustration?: Variant;
     action?: Snippet;
   }
-  let { title, subtitle, action }: Props = $props();
+  let { title, subtitle, illustration = 'deadline', action }: Props = $props();
 </script>
 
 <div class="flex flex-col items-center justify-center gap-3 px-6 py-14 text-center md:py-20">
-  <p class="text-[18px] font-medium text-text">{title}</p>
+  <EmptyIllustration variant={illustration} />
+  <p class="mt-2 text-[18px] font-medium text-text">{title}</p>
   {#if subtitle}
     <p class="max-w-sm text-sm text-muted">{subtitle}</p>
   {/if}

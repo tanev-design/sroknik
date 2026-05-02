@@ -444,5 +444,10 @@ export const copy: Copy = {
 
   currency: {
     dualDisplayNote: 'Until 8 August 2026 prices are shown in euros and in leva.'
+  },
+
+  signature: {
+    line: 'Crafted with care by tanev.design · Plovdiv',
+    href: 'https://tanev.design'
   }
 } as const;

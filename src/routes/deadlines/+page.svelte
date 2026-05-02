@@ -58,7 +58,7 @@
 </div>
 
 {#if !list.length}
-  <EmptyState title={t.current.deadline.empty}>
+  <EmptyState title={t.current.deadline.empty} illustration="deadline">
     {#snippet action()}
       <Button onclick={() => (addOpen = true)}>{t.current.deadline.addFirst}</Button>
     {/snippet}

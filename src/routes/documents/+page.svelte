@@ -91,7 +91,7 @@
 {/if}
 
 {#if documentsStore.count === 0 && !formOpen}
-  <EmptyState title={t.current.documents.empty}>
+  <EmptyState title={t.current.documents.empty} illustration="document">
     {#snippet action()}
       {#if canAddSet}
         <Button onclick={() => (formOpen = true)}>{t.current.documents.addSet}</Button>

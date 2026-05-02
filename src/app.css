@@ -33,7 +33,9 @@
 
   /* Motion */
   --ease-quiet: cubic-bezier(0.2, 0.6, 0.2, 1);
+  --ease-apple: cubic-bezier(0.32, 0.72, 0, 1);
   --duration-quiet: 180ms;
+  --duration-sheet: 240ms;
 }
 
 :root.dark {
@@ -94,11 +96,21 @@ body {
   padding-bottom: calc(env(safe-area-inset-bottom) + 5.5rem);
 }
 
-/* Focus ring — accessible, calm */
+/* Focus ring — accessible, calm. iOS-style: solid 2px outline + soft halo. */
 :where(a, button, [role='button'], input, select, textarea):focus-visible {
   outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-  border-radius: 6px;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--color-accent) 18%, transparent);
+  border-radius: 8px;
+  transition:
+    box-shadow var(--duration-quiet) var(--ease-quiet),
+    outline-offset var(--duration-quiet) var(--ease-quiet);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(a, button, [role='button'], input, select, textarea):focus-visible {
+    transition: none;
+  }
 }
 
 /* Tabular numerals for any element bearing numbers we want aligned. */
@@ -151,4 +163,167 @@ input[type='date']::-webkit-calendar-picker-indicator {
 /* Hairline divider used between settings rows / list rows. */
 .hairline {
   border-bottom: 1px solid var(--color-border);
+}
+
+/* ---------- Polish layer ---------- */
+
+/* Press state for tappable cards/buttons. Apply class="pressable". */
+.pressable {
+  transition:
+    transform var(--duration-quiet) var(--ease-apple),
+    box-shadow var(--duration-quiet) var(--ease-apple),
+    border-color var(--duration-quiet) var(--ease-apple);
+  will-change: transform;
+}
+.pressable:active:not(:disabled) {
+  transform: scale(0.985);
+}
+
+/* Urgency strip on DeadlineCard — draws in vertically on first paint. */
+@keyframes strip-draw {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+.urgency-strip {
+  transform-origin: top;
+  animation: strip-draw 220ms var(--ease-apple) both;
+}
+
+/* Skeleton shimmer — calm 1.5s sweep at 6% opacity. */
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--color-border) 35%, transparent) 0%,
+    color-mix(in srgb, var(--color-border) 70%, transparent) 50%,
+    color-mix(in srgb, var(--color-border) 35%, transparent) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1500ms linear infinite;
+  border-radius: 8px;
+}
+
+/* Bottom-sheet entrance — Apple-style ease for Bits UI Dialog content. */
+@keyframes sheet-in {
+  from {
+    transform: translateY(16px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@keyframes sheet-in-mobile {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.sheet-content[data-state='open'] {
+  animation: sheet-in-mobile var(--duration-sheet) var(--ease-apple);
+}
+@media (min-width: 768px) {
+  .sheet-content[data-state='open'] {
+    animation: sheet-in var(--duration-sheet) var(--ease-apple);
+  }
+}
+.sheet-overlay[data-state='open'] {
+  animation: overlay-in var(--duration-quiet) var(--ease-quiet);
+}
+
+/* Number ticker — fades and lifts the changing value. */
+@keyframes tick-roll {
+  from {
+    transform: translateY(-6px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+.tick-value {
+  display: inline-block;
+  animation: tick-roll 220ms var(--ease-apple);
+}
+
+/* Toast entrance + auto-dismiss progress underline. */
+@keyframes toast-in {
+  from {
+    transform: translateY(12px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@keyframes toast-progress {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+/* View-transition: cross-route fade. SvelteKit triggers via onNavigate. */
+@view-transition {
+  navigation: auto;
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 180ms;
+  animation-timing-function: var(--ease-apple);
+}
+::view-transition-old(root) {
+  animation-name: vt-fade-out;
+}
+::view-transition-new(root) {
+  animation-name: vt-fade-in;
+}
+@keyframes vt-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes vt-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .urgency-strip,
+  .tick-value,
+  .skeleton,
+  .sheet-content[data-state='open'],
+  .sheet-overlay[data-state='open'] {
+    animation: none !important;
+  }
+  .pressable:active:not(:disabled) {
+    transform: none;
+  }
 }

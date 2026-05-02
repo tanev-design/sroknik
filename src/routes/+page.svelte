@@ -3,6 +3,7 @@
   import DeadlineCard from '$lib/components/deadline/DeadlineCard.svelte';
   import FAB from '$lib/components/shared/FAB.svelte';
   import Button from '$lib/components/shared/Button.svelte';
+  import Skeleton from '$lib/components/ui/Skeleton.svelte';
   import AddDeadlineSheet from '$lib/components/deadline/AddDeadlineSheet.svelte';
   import DeadlineDetailSheet from '$lib/components/deadline/DeadlineDetailSheet.svelte';
   import { carsStore } from '$lib/stores/cars.svelte';
@@ -110,7 +111,13 @@
     </article>
   </section>
 
-  {#if hasAny}
+  {#if !deadlinesStore.loaded}
+    <ul class="flex flex-col gap-2.5">
+      {#each Array(3) as _, i (i)}
+        <li><Skeleton shape="card" /></li>
+      {/each}
+    </ul>
+  {:else if hasAny}
     <div class="flex flex-col gap-7">
     {#if next}
       <section>

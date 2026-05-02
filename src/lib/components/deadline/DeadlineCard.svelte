@@ -10,6 +10,7 @@
   import { t } from '$lib/copy/i18n.svelte';
   import { carsStore } from '$lib/stores/cars.svelte';
   import { peopleStore } from '$lib/stores/people.svelte';
+  import NumberTicker from '$lib/components/ui/NumberTicker.svelte';
 
   interface Props {
     deadline: Deadline;
@@ -72,13 +73,13 @@
   type="button"
   disabled={!onSelect}
   onclick={() => onSelect?.(deadline)}
-  class="relative flex min-h-[44px] w-full items-start gap-4 overflow-hidden rounded-[var(--radius-card)] border border-border bg-surface text-left shadow-[var(--shadow-card)] transition-all hover:border-[var(--color-border-strong)] disabled:cursor-default {onSelect
+  class="pressable relative flex min-h-[44px] w-full items-start gap-4 overflow-hidden rounded-[var(--radius-card)] border border-border bg-surface text-left shadow-[var(--shadow-card)] hover:border-[var(--color-border-strong)] hover:shadow-[0_2px_4px_rgba(26,25,23,0.05),0_8px_20px_rgba(26,25,23,0.05)] disabled:cursor-default {onSelect
     ? 'cursor-pointer'
     : ''} {isPrimary ? 'p-5 md:p-6' : 'p-4 md:p-5'}"
 >
   <span
     aria-hidden="true"
-    class="absolute inset-y-0 left-0 w-1 {stripColor[urgency] ?? 'bg-border'}"
+    class="urgency-strip absolute inset-y-0 left-0 w-1 {stripColor[urgency] ?? 'bg-border'}"
   ></span>
 
   <div class="ml-1 min-w-0 flex-1">
@@ -103,7 +104,7 @@
         ? 'text-base md:text-[17px]'
         : 'text-sm'}"
     >
-      {relative}
+      <NumberTicker value={relative} />
     </p>
     <p class="mt-0.5 text-xs text-muted tabular-nums">{absolute}</p>
   </div>

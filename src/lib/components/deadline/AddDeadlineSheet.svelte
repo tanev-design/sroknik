@@ -22,10 +22,10 @@
 <Dialog.Root bind:open onOpenChange={(v: boolean) => onOpenChange(v)}>
   <Dialog.Portal>
     <Dialog.Overlay
-      class="fixed inset-0 z-40 bg-[rgba(26,25,23,0.45)] backdrop-blur-[2px] data-[state=open]:animate-in data-[state=closed]:animate-out"
+      class="sheet-overlay fixed inset-0 z-40 bg-[rgba(26,25,23,0.45)] backdrop-blur-[2px]"
     />
     <Dialog.Content
-      class="fixed inset-x-0 bottom-0 z-50 mx-auto flex max-h-[92svh] w-full max-w-[640px] flex-col overflow-hidden rounded-t-[20px] border border-border bg-bg shadow-[var(--shadow-sheet)] data-[state=open]:animate-in data-[state=closed]:animate-out md:bottom-auto md:top-12 md:max-h-[85svh] md:rounded-[var(--radius-card)]"
+      class="sheet-content fixed inset-x-0 bottom-0 z-50 mx-auto flex max-h-[92svh] w-full max-w-[640px] flex-col overflow-hidden rounded-t-[20px] border border-border bg-bg shadow-[var(--shadow-sheet)] md:bottom-auto md:top-12 md:max-h-[85svh] md:rounded-[var(--radius-card)]"
     >
       <div
         class="flex items-center justify-between border-b border-border bg-surface px-4 py-3.5 md:px-6"

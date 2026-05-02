@@ -107,7 +107,7 @@
 {/if}
 
 {#if carsStore.count === 0 && !formOpen}
-  <EmptyState title={t.current.car.empty}>
+  <EmptyState title={t.current.car.empty} illustration="car">
     {#snippet action()}
       {#if canAddCar}
         <Button onclick={() => (formOpen = true)}>{t.current.car.addCar}</Button>

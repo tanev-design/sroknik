@@ -442,6 +442,11 @@ export const copy = {
 
   currency: {
     dualDisplayNote: 'До 8 август 2026 г. цените се показват в евро и в лева.'
+  },
+
+  signature: {
+    line: 'Направено с внимание от tanev.design · Пловдив',
+    href: 'https://tanev.design'
   }
 };
 

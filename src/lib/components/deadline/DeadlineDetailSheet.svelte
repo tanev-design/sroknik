@@ -14,6 +14,7 @@
   import { deadlinesRepo } from '$lib/db/repositories/deadlines';
   import { buildICS, icsFilename } from '$lib/logic/reminder';
   import { downloadBlob } from '$lib/utils/download';
+  import { toast } from '$lib/stores/toast.svelte';
   import { getCategory, getProvider, resolveOfficialUrl } from '$lib/constants/categories';
   import { formatAbsoluteDate, formatRelativeDate, getDaysRemaining } from '$lib/logic/urgency';
   import { carsStore } from '$lib/stores/cars.svelte';
@@ -42,24 +43,28 @@
   async function markDone() {
     if (!deadline) return;
     await deadlinesRepo.setStatus(deadline.id, 'done');
+    toast.success(t.current.toast.saved);
     close();
   }
 
   async function archive() {
     if (!deadline) return;
     await deadlinesRepo.setStatus(deadline.id, 'archived');
+    toast.success(t.current.toast.archived);
     close();
   }
 
   async function restore() {
     if (!deadline) return;
     await deadlinesRepo.setStatus(deadline.id, 'active');
+    toast.success(t.current.toast.restored);
     close();
   }
 
   async function remove() {
     if (!deadline) return;
     await deadlinesRepo.remove(deadline.id);
+    toast.success(t.current.toast.deleted);
     close();
   }
 
@@ -67,6 +72,7 @@
     if (!deadline) return;
     const ics = buildICS([deadline]);
     downloadBlob(icsFilename(deadline.title, deadline.dueDate), ics, 'text/calendar');
+    toast.success(t.current.toast.exportedICS);
   }
 
   const days = $derived(deadline ? getDaysRemaining(deadline.dueDate) : 0);
@@ -91,9 +97,9 @@
 
 <Dialog.Root bind:open onOpenChange={(v: boolean) => onOpenChange(v)}>
   <Dialog.Portal>
-    <Dialog.Overlay class="fixed inset-0 z-40 bg-[rgba(26,25,23,0.45)] backdrop-blur-[2px]" />
+    <Dialog.Overlay class="sheet-overlay fixed inset-0 z-40 bg-[rgba(26,25,23,0.45)] backdrop-blur-[2px]" />
     <Dialog.Content
-      class="fixed inset-x-0 bottom-0 z-50 mx-auto flex max-h-[92svh] w-full max-w-[640px] flex-col overflow-hidden rounded-t-[20px] border border-border bg-bg shadow-[var(--shadow-sheet)] md:bottom-auto md:top-12 md:max-h-[85svh] md:rounded-[var(--radius-card)]"
+      class="sheet-content fixed inset-x-0 bottom-0 z-50 mx-auto flex max-h-[92svh] w-full max-w-[640px] flex-col overflow-hidden rounded-t-[20px] border border-border bg-bg shadow-[var(--shadow-sheet)] md:bottom-auto md:top-12 md:max-h-[85svh] md:rounded-[var(--radius-card)]"
     >
       <div
         class="flex items-center justify-between border-b border-border bg-surface px-4 py-3.5 md:px-6"

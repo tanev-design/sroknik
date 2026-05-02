@@ -2,12 +2,14 @@
   import TopBar from '$lib/components/layout/TopBar.svelte';
   import Button from '$lib/components/shared/Button.svelte';
   import PrivacyNotice from '$lib/components/shared/PrivacyNotice.svelte';
+  import Signature from '$lib/components/shared/Signature.svelte';
   import { settingsStore } from '$lib/stores/settings.svelte';
   import { deadlinesStore } from '$lib/stores/deadlines.svelte';
   import { buildExport, applyReplace, applyMerge, clearAllUserData } from '$lib/db/backup';
   import { validateImportSchema } from '$lib/logic/import-schema';
   import { buildICS } from '$lib/logic/reminder';
   import { downloadBlob, readFileAsText } from '$lib/utils/download';
+  import { toast } from '$lib/stores/toast.svelte';
   import { t } from '$lib/copy/i18n.svelte';
   import type { ExportSchema, Language, Theme } from '$lib/types';
   import { ChevronRight } from 'lucide-svelte';
@@ -40,6 +42,7 @@
       JSON.stringify(data, null, 2),
       'application/json'
     );
+    toast.success(t.current.toast.exportedJSON);
   }
 
   async function exportAllICS() {
@@ -48,6 +51,7 @@
     const ics = buildICS(data.deadlines);
     const today = new Date().toISOString().slice(0, 10);
     downloadBlob(`sroknik-all-${today}.ics`, ics, 'text/calendar');
+    toast.success(t.current.toast.exportedICS);
   }
 
   async function onImportFile(e: Event) {
@@ -73,12 +77,14 @@
     if (!importing.data) return;
     await applyReplace(importing.data);
     importing = { data: null, error: null };
+    toast.success(t.current.toast.imported);
   }
 
   async function importMerge() {
     if (!importing.data) return;
     await applyMerge(importing.data);
     importing = { data: null, error: null };
+    toast.success(t.current.toast.imported);
   }
 
   async function confirmDeleteAll() {
@@ -86,6 +92,7 @@
     await clearAllUserData();
     deleteConfirm = '';
     deleteMode = false;
+    toast.success(t.current.settings.deletedAll);
   }
 
   async function requestNotifications() {
@@ -325,4 +332,6 @@
       </li>
     </ul>
   </section>
+
+  <Signature />
 </div>
