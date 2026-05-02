@@ -12,7 +12,7 @@
 </script>
 
 <article
-  class="flex flex-col gap-3 rounded-[var(--radius-card)] border border-border bg-surface p-4 shadow-[var(--shadow-card)] md:p-5"
+  class="glass-card flex flex-col gap-3 rounded-[var(--radius-card)] p-4 md:p-5"
 >
   <header class="flex items-start justify-between gap-2">
     <div class="min-w-0">

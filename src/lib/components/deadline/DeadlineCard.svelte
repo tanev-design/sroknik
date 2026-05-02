@@ -73,7 +73,7 @@
   type="button"
   disabled={!onSelect}
   onclick={() => onSelect?.(deadline)}
-  class="pressable relative flex min-h-[44px] w-full items-start gap-4 overflow-hidden rounded-[var(--radius-card)] border border-border bg-surface text-left shadow-[var(--shadow-card)] hover:border-[var(--color-border-strong)] hover:shadow-[0_2px_4px_rgba(26,25,23,0.05),0_8px_20px_rgba(26,25,23,0.05)] disabled:cursor-default {onSelect
+  class="pressable glass-card relative flex min-h-[44px] w-full items-start gap-4 rounded-[var(--radius-card)] text-left hover:border-[var(--color-border-strong)] disabled:cursor-default {onSelect
     ? 'cursor-pointer'
     : ''} {isPrimary ? 'p-5 md:p-6' : 'p-4 md:p-5'}"
 >

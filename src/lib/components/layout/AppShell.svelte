@@ -8,11 +8,13 @@
   let { children }: Props = $props();
 </script>
 
-<div class="app-wrapper flex min-h-[100svh] bg-bg text-text">
+<div class="app-wrapper flex min-h-[100svh] bg-bg p-0 text-text md:p-3">
   <SideRail />
   <main
-    class="mx-auto w-full max-w-[1080px] flex-1 px-4 pb-[calc(env(safe-area-inset-bottom)+5.5rem)] pt-5 md:px-10 md:pb-12 md:pt-10"
+    class="app-panel mx-auto w-full flex-1 px-4 pb-[calc(env(safe-area-inset-bottom)+5.5rem)] pt-5 md:min-h-[calc(100svh-1.5rem)] md:max-w-[1500px] md:rounded-[24px] md:px-8 md:pb-10 md:pt-8 xl:px-10"
   >
-    {@render children()}
+    <div class="panel-content">
+      {@render children()}
+    </div>
   </main>
 </div>

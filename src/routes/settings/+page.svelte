@@ -104,8 +104,8 @@
 
 <TopBar title={t.current.settings.title} />
 
-<div class="flex flex-col gap-8">
-  <section>
+<div class="grid gap-6 xl:grid-cols-2">
+  <section class="glass-card rounded-[var(--radius-card)] p-5">
     <h2 class="mb-3 text-xs font-semibold uppercase tracking-wide text-muted">
       {t.current.settings.theme}
     </h2>
@@ -131,7 +131,7 @@
     </div>
   </section>
 
-  <section>
+  <section class="glass-card rounded-[var(--radius-card)] p-5">
     <h2 class="mb-3 text-xs font-semibold uppercase tracking-wide text-muted">
       {t.current.settings.sections.language}
     </h2>
@@ -151,21 +151,21 @@
     </div>
   </section>
 
-  <section>
+  <section class="glass-card rounded-[var(--radius-card)] p-5 xl:col-span-2">
     <h2 class="mb-3 text-xs font-semibold uppercase tracking-wide text-muted">
       {t.current.settings.sections.privacy}
     </h2>
-    <div class="rounded-[var(--radius-card)] border border-border bg-surface p-4 md:p-5">
+    <div class="rounded-[var(--radius-card)] border border-border bg-surface/70 p-4 md:p-5">
       <PrivacyNotice />
     </div>
   </section>
 
-  <section>
+  <section class="glass-card rounded-[var(--radius-card)] p-5">
     <h2 class="mb-3 text-xs font-semibold uppercase tracking-wide text-muted">
       {t.current.settings.sections.reminders}
     </h2>
     <div
-      class="flex flex-col gap-3 rounded-[var(--radius-card)] border border-border bg-surface p-4 md:p-5"
+      class="flex flex-col gap-3 rounded-[var(--radius-card)] border border-border bg-surface/70 p-4 md:p-5"
     >
       {#if notifyPermission === 'unsupported'}
         <p class="text-sm text-muted">{t.current.deadline.calendarHint}</p>
@@ -184,12 +184,12 @@
     </div>
   </section>
 
-  <section>
+  <section class="glass-card rounded-[var(--radius-card)] p-5">
     <h2 class="mb-3 text-xs font-semibold uppercase tracking-wide text-muted">
       {t.current.settings.sections.data}
     </h2>
     <div
-      class="flex flex-col gap-3 rounded-[var(--radius-card)] border border-border bg-surface p-4 md:p-5"
+      class="flex flex-col gap-3 rounded-[var(--radius-card)] border border-border bg-surface/70 p-4 md:p-5"
     >
       <div class="flex flex-wrap gap-2">
         <Button variant="secondary" onclick={exportJSON}>{t.current.settings.export}</Button>
@@ -218,7 +218,7 @@
 
       {#if importing.data}
         <div
-          class="flex flex-col gap-3 rounded-[var(--radius-control)] border border-border bg-bg p-3"
+          class="flex flex-col gap-3 rounded-[var(--radius-control)] border border-border bg-bg/70 p-3"
         >
           <p class="text-sm text-text">
             {t.current.settings.importPreview(
@@ -245,7 +245,7 @@
     </div>
   </section>
 
-  <section>
+  <section class="glass-card rounded-[var(--radius-card)] p-5 xl:col-span-2">
     <h2 class="mb-3 text-xs font-semibold uppercase tracking-wide text-muted">
       {t.current.settings.deleteAll}
     </h2>
@@ -292,12 +292,12 @@
     </div>
   </section>
 
-  <section>
+  <section class="xl:col-span-2">
     <ul class="flex flex-col gap-2">
       <li>
         <a
           href="/plus"
-          class="flex min-h-[44px] items-center justify-between rounded-[var(--radius-control)] border border-border bg-surface px-4 py-3 text-sm text-text hover:bg-accent-light/40"
+          class="glass-card flex min-h-[44px] items-center justify-between rounded-[var(--radius-control)] px-4 py-3 text-sm text-text hover:border-[var(--color-border-strong)]"
         >
           <span>{t.current.settings.plusLink}</span>
           <ChevronRight size={16} class="text-muted" aria-hidden="true" />
@@ -306,7 +306,7 @@
       <li>
         <a
           href="/how-it-works"
-          class="flex min-h-[44px] items-center justify-between rounded-[var(--radius-control)] border border-border bg-surface px-4 py-3 text-sm text-text hover:bg-accent-light/40"
+          class="glass-card flex min-h-[44px] items-center justify-between rounded-[var(--radius-control)] px-4 py-3 text-sm text-text hover:border-[var(--color-border-strong)]"
         >
           <span>{t.current.settings.howItWorks}</span>
           <ChevronRight size={16} class="text-muted" aria-hidden="true" />
@@ -315,7 +315,7 @@
       <li>
         <a
           href="/legal"
-          class="flex min-h-[44px] items-center justify-between rounded-[var(--radius-control)] border border-border bg-surface px-4 py-3 text-sm text-text hover:bg-accent-light/40"
+          class="glass-card flex min-h-[44px] items-center justify-between rounded-[var(--radius-control)] px-4 py-3 text-sm text-text hover:border-[var(--color-border-strong)]"
         >
           <span>{t.current.nav.legal}</span>
           <ChevronRight size={16} class="text-muted" aria-hidden="true" />
@@ -324,7 +324,7 @@
       <li>
         <a
           href="/cars"
-          class="flex min-h-[44px] items-center justify-between rounded-[var(--radius-control)] border border-border bg-surface px-4 py-3 text-sm text-text hover:bg-accent-light/40"
+          class="glass-card flex min-h-[44px] items-center justify-between rounded-[var(--radius-control)] px-4 py-3 text-sm text-text hover:border-[var(--color-border-strong)]"
         >
           <span>{t.current.nav.cars}</span>
           <ChevronRight size={16} class="text-muted" aria-hidden="true" />
@@ -333,5 +333,7 @@
     </ul>
   </section>
 
-  <Signature />
+  <div class="xl:col-span-2">
+    <Signature />
+  </div>
 </div>

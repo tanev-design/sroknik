@@ -11,6 +11,7 @@
   import { settingsStore } from '$lib/stores/settings.svelte';
   import { t } from '$lib/copy/i18n.svelte';
   import { canAdd } from '$lib/logic/plan-limits';
+  import { Car, TimerReset } from 'lucide-svelte';
 
   let formOpen = $state(false);
   let nickname = $state('');
@@ -68,10 +69,29 @@
   </div>
 {/if}
 
+<section class="accent-panel mb-6 rounded-[22px] p-5 md:p-6">
+  <div class="panel-content grid gap-4 sm:grid-cols-2">
+    <article class="metric-card rounded-[var(--radius-card)] p-4">
+      <span class="grid h-11 w-11 place-items-center rounded-full bg-accent-light text-accent">
+        <Car size={20} aria-hidden="true" />
+      </span>
+      <p class="mt-4 text-3xl font-semibold tabular-nums text-text">{carsStore.count}</p>
+      <p class="text-xs text-muted">{t.current.nav.cars}</p>
+    </article>
+    <article class="metric-card rounded-[var(--radius-card)] p-4">
+      <span class="grid h-11 w-11 place-items-center rounded-full bg-accent-light text-accent">
+        <TimerReset size={20} aria-hidden="true" />
+      </span>
+      <p class="mt-4 text-3xl font-semibold tabular-nums text-text">{deadlinesStore.active.length}</p>
+      <p class="text-xs text-muted">{t.current.dashboard.activeDeadlines}</p>
+    </article>
+  </div>
+</section>
+
 {#if formOpen}
   <form
     onsubmit={createCar}
-    class="mb-6 flex flex-col gap-4 rounded-[var(--radius-card)] border border-border bg-surface p-4 md:p-5"
+    class="glass-card mb-6 flex flex-col gap-4 rounded-[var(--radius-card)] p-4 md:p-5"
   >
     <label class="block">
       <span class="mb-1.5 block text-sm font-medium text-text">{t.current.car.nicknameField}</span>
@@ -115,11 +135,11 @@
     {/snippet}
   </EmptyState>
 {:else}
-  <ul class="flex flex-col gap-2.5">
+  <ul class="grid gap-3 md:grid-cols-2">
     {#each carsStore.all as car (car.id)}
       {@const count = activeDeadlinesFor(car.id)}
       <li
-        class="flex items-start justify-between gap-4 rounded-[var(--radius-card)] border border-border bg-surface p-4 shadow-[var(--shadow-card)] md:p-5"
+        class="glass-card flex items-start justify-between gap-4 rounded-[var(--radius-card)] p-4 md:p-5"
       >
         <div class="min-w-0">
           <p class="truncate text-base font-medium text-text">{car.nickname}</p>

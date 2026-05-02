@@ -32,7 +32,7 @@
 
 <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
   <article
-    class="flex flex-col gap-4 rounded-[var(--radius-card)] border border-border bg-surface p-5 md:p-6"
+    class="glass-card flex flex-col gap-4 rounded-[var(--radius-card)] p-5 md:p-6"
   >
     <header>
       <p class="text-xs font-medium uppercase tracking-wide text-muted">{t.current.plus.compareFree}</p>
@@ -63,15 +63,15 @@
   </article>
 
   <article
-    class="flex flex-col gap-4 rounded-[var(--radius-card)] border-2 border-accent bg-accent-light/30 p-5 md:p-6"
+    class="accent-panel flex flex-col gap-4 rounded-[var(--radius-card)] p-5 md:p-6"
   >
-    <header class="flex items-center justify-between">
+    <header class="panel-content flex items-center justify-between">
       <p class="text-xs font-medium uppercase tracking-wide text-accent">{t.current.plus.comparePlus}</p>
       <span
         class="rounded-full bg-accent px-2.5 py-0.5 text-xs font-medium text-white"
       >{t.current.plus.comingSoonBadge}</span>
     </header>
-    <ul class="flex flex-col gap-2 text-sm text-text">
+    <ul class="panel-content flex flex-col gap-2 text-sm text-text">
       <li class="flex items-start gap-2">
         <Check size={16} class="mt-0.5 shrink-0 text-accent" aria-hidden="true" />
         <span>{featurePeople(PLUS_PLAN.people)}</span>

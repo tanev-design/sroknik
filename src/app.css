@@ -6,29 +6,29 @@
     sans-serif;
 
   /* Base palette */
-  --color-bg: #f9f7f4;
-  --color-surface: #ffffff;
-  --color-elevated: #fbf9f6;
-  --color-border: #e8e4df;
-  --color-border-strong: #d6d1c9;
-  --color-text: #1a1917;
+  --color-bg: #f3f0ea;
+  --color-surface: #fffcf7;
+  --color-elevated: #f8f4ed;
+  --color-border: #ded7ce;
+  --color-border-strong: #c8beb1;
+  --color-text: #171614;
   --color-text-soft: #3a3530;
-  --color-muted: #7a736b;
-  --color-accent: #1e5c3a;
-  --color-accent-light: #ebf3ee;
-  --color-accent-border: #c9d9ce;
+  --color-muted: #776f66;
+  --color-accent: #1f7a4a;
+  --color-accent-light: #e8f5ee;
+  --color-accent-border: #b8dec7;
   --color-danger: #b84040;
   --color-danger-light: #f6e6e6;
   --color-warning: #9a6b1a;
   --color-warning-light: #f6ecdb;
 
   /* Radii */
-  --radius-card: 14px;
+  --radius-card: 18px;
   --radius-control: 10px;
   --radius-pill: 999px;
 
   /* Shadows — subtle, calm */
-  --shadow-card: 0 1px 2px rgba(26, 25, 23, 0.04), 0 2px 6px rgba(26, 25, 23, 0.03);
+  --shadow-card: 0 1px 2px rgba(26, 25, 23, 0.05), 0 16px 36px rgba(26, 25, 23, 0.07);
   --shadow-sheet: 0 -8px 32px rgba(26, 25, 23, 0.08);
 
   /* Motion */
@@ -40,22 +40,22 @@
 
 :root.dark {
   color-scheme: dark;
-  --color-bg: #11110f;
-  --color-surface: #1a1916;
-  --color-elevated: #222018;
-  --color-border: #302d27;
-  --color-border-strong: #494237;
-  --color-text: #f4efe7;
-  --color-text-soft: #ddd4c8;
-  --color-muted: #aaa096;
-  --color-accent: #5cc082;
-  --color-accent-light: #173823;
-  --color-accent-border: #315b3f;
+  --color-bg: #070b0c;
+  --color-surface: #0d1213;
+  --color-elevated: #111819;
+  --color-border: #263033;
+  --color-border-strong: #39474a;
+  --color-text: #f7f4ed;
+  --color-text-soft: #d6d1c8;
+  --color-muted: #a39c92;
+  --color-accent: #55d083;
+  --color-accent-light: #103821;
+  --color-accent-border: #236b3e;
   --color-danger: #ff8c8c;
   --color-danger-light: #3b1f1f;
   --color-warning: #e3b461;
   --color-warning-light: #352818;
-  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.22), 0 12px 30px rgba(0, 0, 0, 0.18);
+  --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.03), 0 22px 60px rgba(0, 0, 0, 0.32);
   --shadow-sheet: 0 -8px 32px rgba(0, 0, 0, 0.45);
 }
 
@@ -75,6 +75,10 @@ body {
   font-size: 16px;
   color: var(--color-text);
   background-color: var(--color-bg);
+  background-image:
+    radial-gradient(circle at 18% 4%, color-mix(in srgb, var(--color-accent) 16%, transparent) 0, transparent 28rem),
+    radial-gradient(circle at 88% 14%, color-mix(in srgb, var(--color-warning) 10%, transparent) 0, transparent 26rem),
+    linear-gradient(180deg, color-mix(in srgb, var(--color-surface) 30%, var(--color-bg)) 0%, var(--color-bg) 42%);
   /* svh = stable viewport height (does not animate with iOS address bar) */
   min-height: 100svh;
   -webkit-tap-highlight-color: transparent;
@@ -86,6 +90,142 @@ body {
 .app-wrapper {
   overflow-x: clip;
   min-height: 100svh;
+  position: relative;
+  isolation: isolate;
+}
+
+.app-wrapper::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--color-border) 18%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--color-border) 18%, transparent) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.38), transparent 70%);
+}
+
+.app-panel {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--color-border) 82%, transparent);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--color-surface) 96%, transparent), color-mix(in srgb, var(--color-elevated) 84%, transparent)),
+    radial-gradient(circle at 8% 0%, color-mix(in srgb, var(--color-accent) 13%, transparent), transparent 28rem);
+  box-shadow: var(--shadow-card);
+}
+
+.app-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    linear-gradient(120deg, rgba(255, 255, 255, 0.08), transparent 28%),
+    radial-gradient(circle at 72% 18%, color-mix(in srgb, var(--color-accent) 8%, transparent), transparent 24rem);
+}
+
+.glass-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--color-border) 82%, transparent);
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--color-surface) 88%, transparent), color-mix(in srgb, var(--color-elevated) 70%, transparent));
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(18px);
+}
+
+.glass-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.09), transparent 34%);
+}
+
+.glass-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.accent-panel {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--color-accent-border);
+  background:
+    radial-gradient(circle at 16% 18%, color-mix(in srgb, var(--color-accent) 34%, transparent), transparent 25rem),
+    radial-gradient(circle at 94% 22%, color-mix(in srgb, var(--color-warning) 18%, transparent), transparent 22rem),
+    linear-gradient(135deg, color-mix(in srgb, var(--color-accent-light) 88%, var(--color-surface)), color-mix(in srgb, var(--color-surface) 86%, var(--color-bg)));
+  box-shadow: 0 26px 80px color-mix(in srgb, var(--color-accent) 16%, transparent);
+}
+
+.accent-panel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(110deg, transparent 0 42%, color-mix(in srgb, var(--color-accent) 8%, transparent) 42% 43%, transparent 43%),
+    repeating-linear-gradient(135deg, color-mix(in srgb, var(--color-accent) 7%, transparent) 0 1px, transparent 1px 18px);
+  opacity: 0.42;
+}
+
+.accent-panel > * {
+  position: relative;
+  z-index: 1;
+}
+
+.panel-content {
+  position: relative;
+  z-index: 1;
+}
+
+.metric-card {
+  border: 1px solid color-mix(in srgb, var(--color-accent-border) 70%, var(--color-border));
+  background: linear-gradient(145deg, color-mix(in srgb, var(--color-surface) 72%, transparent), color-mix(in srgb, var(--color-accent-light) 30%, transparent));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.landing-orbit {
+  position: relative;
+}
+
+.landing-orbit::before,
+.landing-orbit::after {
+  content: '';
+  position: absolute;
+  inset: 12%;
+  border: 1px solid color-mix(in srgb, var(--color-accent) 28%, transparent);
+  border-radius: 999px;
+  transform: rotate(-9deg);
+  pointer-events: none;
+}
+
+.landing-orbit::after {
+  inset: 24%;
+  transform: rotate(11deg);
+}
+
+.scroll-reveal {
+  animation: reveal-up both;
+  animation-timeline: view();
+  animation-range: entry 0% cover 28%;
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(22px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 /* iOS safe-area aware bottom padding for fixed nav and FAB */

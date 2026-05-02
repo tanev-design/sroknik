@@ -25,10 +25,10 @@
 
   const variants: Record<Variant, string> = {
     primary:
-      'bg-accent text-white hover:bg-[#184d30] disabled:bg-border disabled:text-muted disabled:cursor-not-allowed',
+      'bg-accent text-white shadow-[0_14px_32px_color-mix(in_srgb,var(--color-accent)_24%,transparent)] hover:bg-[#184d30] disabled:bg-border disabled:text-muted disabled:cursor-not-allowed disabled:shadow-none',
     secondary:
-      'bg-surface text-text border border-border hover:border-[var(--color-border-strong)] disabled:text-muted',
-    ghost: 'bg-transparent text-text hover:bg-bg disabled:text-muted',
+      'bg-surface/80 text-text border border-border shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] hover:border-[var(--color-border-strong)] hover:bg-elevated disabled:text-muted',
+    ghost: 'bg-transparent text-text hover:bg-surface/70 disabled:text-muted',
     danger:
       'bg-[var(--color-danger-light)] text-[var(--color-danger)] hover:bg-[#efd7d7] border border-[#eecccc]'
   };
@@ -42,7 +42,7 @@
 
 <button
   {type}
-  class="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-[var(--radius-control)] font-medium transition-colors focus-visible:outline-accent {variants[
+  class="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-[var(--radius-control)] font-medium transition-all focus-visible:outline-accent {variants[
     variant
   ]} {sizes[size]} {fullWidth ? 'w-full' : ''} {className}"
   {...rest}

@@ -9,7 +9,7 @@
 <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
   <a
     href="/privacy"
-    class="rounded-[var(--radius-card)] border border-border bg-surface p-5 shadow-[var(--shadow-card)] transition-colors hover:border-[var(--color-border-strong)]"
+    class="glass-card rounded-[var(--radius-card)] p-5 transition-colors hover:border-[var(--color-border-strong)]"
   >
     <ShieldCheck size={20} class="text-accent" aria-hidden="true" />
     <h2 class="mt-4 text-lg font-semibold text-text">{t.current.legal.privacyTitle}</h2>
@@ -18,7 +18,7 @@
 
   <a
     href="/cookies"
-    class="rounded-[var(--radius-card)] border border-border bg-surface p-5 shadow-[var(--shadow-card)] transition-colors hover:border-[var(--color-border-strong)]"
+    class="glass-card rounded-[var(--radius-card)] p-5 transition-colors hover:border-[var(--color-border-strong)]"
   >
     <Cookie size={20} class="text-accent" aria-hidden="true" />
     <h2 class="mt-4 text-lg font-semibold text-text">{t.current.legal.cookiesTitle}</h2>
@@ -27,7 +27,7 @@
 
   <a
     href="/terms"
-    class="rounded-[var(--radius-card)] border border-border bg-surface p-5 shadow-[var(--shadow-card)] transition-colors hover:border-[var(--color-border-strong)]"
+    class="glass-card rounded-[var(--radius-card)] p-5 transition-colors hover:border-[var(--color-border-strong)]"
   >
     <Scale size={20} class="text-accent" aria-hidden="true" />
     <h2 class="mt-4 text-lg font-semibold text-text">{t.current.legal.termsTitle}</h2>
@@ -35,10 +35,12 @@
   </a>
 
   <article
-    class="rounded-[var(--radius-card)] border border-[var(--color-accent-border)] bg-accent-light/60 p-5"
+    class="accent-panel rounded-[var(--radius-card)] p-5"
   >
-    <FileCheck2 size={20} class="text-accent" aria-hidden="true" />
-    <h2 class="mt-4 text-lg font-semibold text-text">{t.current.legal.gdprTitle}</h2>
-    <p class="mt-2 text-sm leading-6 text-text-soft">{t.current.legal.gdprBody}</p>
+    <div class="panel-content">
+      <FileCheck2 size={20} class="text-accent" aria-hidden="true" />
+      <h2 class="mt-4 text-lg font-semibold text-text">{t.current.legal.gdprTitle}</h2>
+      <p class="mt-2 text-sm leading-6 text-text-soft">{t.current.legal.gdprBody}</p>
+    </div>
   </article>
 </div>

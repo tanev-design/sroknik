@@ -75,19 +75,21 @@
 
 <aside
   aria-label={t.current.appName}
-  class="hidden md:sticky md:top-0 md:flex md:h-screen md:w-[264px] md:shrink-0 md:flex-col md:gap-7 md:border-r md:border-border md:bg-[linear-gradient(180deg,var(--color-surface)_0%,var(--color-bg)_100%)] md:px-5 md:py-6"
+  class="glass-card hidden md:sticky md:top-3 md:flex md:h-[calc(100svh-1.5rem)] md:w-[264px] md:shrink-0 md:flex-col md:gap-7 md:rounded-[24px] md:px-5 md:py-6"
 >
-  <Logo />
+  <div class="panel-content">
+    <Logo />
+  </div>
 
-  <nav class="flex flex-col gap-1">
+  <nav class="panel-content flex flex-col gap-1">
     {#each primary as item (item.href)}
       {@const active = item.match($page.url.pathname)}
       {@const Icon = item.icon}
       <a
         href={item.href}
         aria-current={active ? 'page' : undefined}
-        class="relative flex h-11 items-center gap-3 rounded-[var(--radius-control)] px-3 text-sm transition-colors
-        {active ? 'bg-accent text-white shadow-[0_8px_20px_rgba(30,92,58,0.16)]' : 'text-text hover:bg-surface'}"
+        class="relative flex h-12 items-center gap-3 rounded-[var(--radius-control)] px-3 text-sm transition-colors
+        {active ? 'border border-[var(--color-accent-border)] bg-accent text-white shadow-[0_14px_36px_color-mix(in_srgb,var(--color-accent)_28%,transparent)]' : 'text-text hover:bg-surface'}"
       >
         <Icon size={17} aria-hidden="true" strokeWidth={1.8} />
         <span>{t.current.nav[item.labelKey]}</span>
@@ -95,14 +97,14 @@
     {/each}
   </nav>
 
-  <div class="rounded-[var(--radius-card)] border border-[var(--color-accent-border)] bg-accent-light/60 p-4">
+  <div class="panel-content rounded-[var(--radius-card)] border border-[var(--color-accent-border)] bg-accent-light/50 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
     <p class="text-xs font-semibold uppercase tracking-wide text-accent">
       {t.current.trust.cardTitle}
     </p>
     <p class="mt-2 text-[13px] leading-5 text-text-soft">{t.current.trust.cardBody}</p>
   </div>
 
-  <div class="mt-auto flex flex-col gap-1 border-t border-border pt-5">
+  <div class="panel-content mt-auto flex flex-col gap-1 border-t border-border pt-5">
     {#each secondary as item (item.href)}
       {@const active = item.match($page.url.pathname)}
       {@const Icon = item.icon}

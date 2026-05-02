@@ -1,7 +1,6 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
   import { ArrowRight, Database, Cpu, Shield, Github } from 'lucide-svelte';
-  import TopBar from '$lib/components/layout/TopBar.svelte';
   import Button from '$lib/components/shared/Button.svelte';
   import OfficialLinkButton from '$lib/components/shared/OfficialLinkButton.svelte';
   import PrivacyNotice from '$lib/components/shared/PrivacyNotice.svelte';
@@ -54,29 +53,51 @@
   );
 </script>
 
-<TopBar title={t.current.howItWorks.title} subtitle={t.current.howItWorks.headline} />
+<section class="accent-panel mb-6 rounded-[24px] p-6 md:p-9">
+  <div class="panel-content grid gap-8 lg:grid-cols-[1fr_0.72fr] lg:items-center">
+    <div>
+      <h1 class="max-w-3xl text-[34px] font-semibold leading-tight tracking-tight text-text md:text-[56px]">
+        {t.current.howItWorks.title}
+      </h1>
+      <p class="mt-4 max-w-2xl text-base leading-7 text-text-soft md:text-lg">
+        {t.current.howItWorks.headline}
+      </p>
+      <div class="mt-7">
+        <Button onclick={() => goto('/deadlines/new')}>{t.current.howItWorks.cta}</Button>
+      </div>
+    </div>
 
-<div class="flex flex-col gap-8">
+    <div class="landing-orbit hidden min-h-[320px] place-items-center lg:grid">
+      <div class="relative grid h-44 w-44 place-items-center rounded-full border border-[var(--color-accent-border)] bg-accent-light/50 shadow-[0_0_80px_color-mix(in_srgb,var(--color-accent)_24%,transparent)]">
+        <Shield size={72} class="text-accent" aria-hidden="true" strokeWidth={1.15} />
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="flex flex-col gap-6 md:gap-8">
   <!-- Privacy summary card -->
   <section
-    class="rounded-[var(--radius-card)] border border-[var(--color-accent-border)] bg-accent-light/50 p-5 md:p-6"
+    class="scroll-reveal accent-panel rounded-[var(--radius-card)] p-5 md:p-6"
   >
-    <PrivacyNotice />
+    <div class="panel-content">
+      <PrivacyNotice />
+    </div>
   </section>
 
   <!-- Data flow infographic -->
-  <section class="rounded-[var(--radius-card)] border border-border bg-surface p-5 shadow-[var(--shadow-card)] md:p-6">
+  <section class="scroll-reveal glass-card rounded-[var(--radius-card)] p-5 md:p-6">
     <p class="eyebrow mb-4">{t.current.howItWorks.onDeviceTitle}</p>
 
     <div class="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_auto_1fr_auto_1fr] sm:items-stretch">
-      <div class="flex flex-col items-center gap-2 rounded-[var(--radius-control)] border border-border bg-bg px-4 py-4 text-center">
+      <div class="flex flex-col items-center gap-2 rounded-[var(--radius-control)] border border-border bg-bg/70 px-4 py-4 text-center">
         <Cpu size={20} aria-hidden="true" class="text-accent" strokeWidth={1.6} />
         <span class="text-sm text-text">{t.current.howItWorks.dataFlowInput}</span>
       </div>
       <div class="hidden items-center justify-center sm:flex">
         <ArrowRight size={18} aria-hidden="true" class="text-muted" />
       </div>
-      <div class="flex flex-col items-center gap-2 rounded-[var(--radius-control)] border border-border bg-bg px-4 py-4 text-center">
+      <div class="flex flex-col items-center gap-2 rounded-[var(--radius-control)] border border-border bg-bg/70 px-4 py-4 text-center">
         <Cpu size={20} aria-hidden="true" class="text-accent" strokeWidth={1.6} />
         <span class="text-sm text-text">{t.current.howItWorks.dataFlowProcess}</span>
       </div>
@@ -102,7 +123,7 @@
     {#each TIMELINE_DOCS as docId (docId)}
       {@const facts = getCategoryFacts(docId)}
       {@const validity = language === 'en' ? facts.validityEn : facts.validityBg}
-      <article class="rounded-[var(--radius-card)] border border-border bg-surface p-5 shadow-[var(--shadow-card)] md:p-6">
+      <article class="scroll-reveal glass-card rounded-[var(--radius-card)] p-5 md:p-6">
         <header class="mb-3 flex items-baseline justify-between gap-3">
           <h3 class="text-base font-medium text-text">{docLabel(docId)}</h3>
         </header>
@@ -152,7 +173,7 @@
         {#if facts.fees && facts.fees.length}
           <div class="mt-5 overflow-hidden rounded-[var(--radius-control)] border border-border">
             <table class="w-full text-sm">
-              <thead class="bg-bg text-left text-xs uppercase tracking-wide text-muted">
+              <thead class="bg-bg/70 text-left text-xs uppercase tracking-wide text-muted">
                 <tr>
                   <th class="px-3 py-2 font-medium">{t.current.howItWorks.feesColService}</th>
                   <th class="px-3 py-2 font-medium">{t.current.howItWorks.feesColDuration}</th>
@@ -180,7 +201,7 @@
   </section>
 
   <!-- Trust block -->
-  <section class="rounded-[var(--radius-card)] border border-border bg-surface p-5 shadow-[var(--shadow-card)] md:p-6">
+  <section class="scroll-reveal glass-card rounded-[var(--radius-card)] p-5 md:p-6">
     <p class="eyebrow mb-3">{t.current.howItWorks.trustTitle}</p>
 
     <ul class="flex flex-col gap-3 text-sm text-text-soft">
@@ -221,22 +242,22 @@
 
   <!-- Existing supporting cards -->
   <section class="grid grid-cols-1 gap-3 md:grid-cols-2">
-    <article class="rounded-[var(--radius-card)] border border-border bg-surface p-5 shadow-[var(--shadow-card)]">
+    <article class="scroll-reveal glass-card rounded-[var(--radius-card)] p-5">
       <p class="eyebrow mb-2">{t.current.howItWorks.controlTitle}</p>
       <p class="text-sm leading-6 text-text-soft">{t.current.howItWorks.controlBody}</p>
     </article>
 
-    <article class="rounded-[var(--radius-card)] border border-border bg-surface p-5 shadow-[var(--shadow-card)]">
+    <article class="scroll-reveal glass-card rounded-[var(--radius-card)] p-5">
       <p class="eyebrow mb-2">{t.current.howItWorks.bgFirstTitle}</p>
       <p class="text-sm leading-6 text-text-soft">{t.current.howItWorks.bgFirstBody}</p>
     </article>
   </section>
 
-  <section class="rounded-[var(--radius-card)] border border-border bg-surface p-5 shadow-[var(--shadow-card)]">
+  <section class="scroll-reveal glass-card rounded-[var(--radius-card)] p-5">
     <p class="eyebrow mb-3">{t.current.howItWorks.notCollectedTitle}</p>
     <ul class="grid grid-cols-1 gap-2 text-sm text-text-soft sm:grid-cols-2">
       {#each t.current.howItWorks.notCollected as item (item)}
-        <li class="rounded-[var(--radius-control)] border border-border bg-bg px-3 py-2">
+        <li class="rounded-[var(--radius-control)] border border-border bg-bg/70 px-3 py-2">
           {item}
         </li>
       {/each}
