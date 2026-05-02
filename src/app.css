@@ -79,17 +79,6 @@ body {
   overscroll-behavior: none;
 }
 
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(circle at 18% 8%, color-mix(in srgb, var(--color-accent) 12%, transparent), transparent 30%),
-    linear-gradient(120deg, transparent 0%, color-mix(in srgb, var(--color-warning-light) 42%, transparent) 100%);
-  opacity: 0.55;
-}
-
 /* App wrapper isolates horizontal-scroll clipping per global rules — keep
    it off html/body to avoid Chromium-iOS toolbar resize loops. */
 .app-wrapper {

@@ -19,6 +19,7 @@
   import { carsStore } from '$lib/stores/cars.svelte';
   import { peopleStore } from '$lib/stores/people.svelte';
   import DeadlineForm from './DeadlineForm.svelte';
+  import CategoryInfoPanel from './CategoryInfoPanel.svelte';
   import Button from '$lib/components/shared/Button.svelte';
   import OfficialLinkButton from '$lib/components/shared/OfficialLinkButton.svelte';
   import PrivacyLine from '$lib/components/ui/PrivacyLine.svelte';
@@ -184,6 +185,8 @@
                   fullWidth
                 />
               {/if}
+
+              <CategoryInfoPanel category={deadline.category} />
 
               <!-- Actions -->
               <div class="grid grid-cols-2 gap-2 sm:grid-cols-3">

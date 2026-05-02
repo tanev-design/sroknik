@@ -392,7 +392,56 @@ export const copy = {
     bgFirstTitle: 'Български първо',
     bgFirstBody:
       'Категориите, текстовете и линковете към официални системи са направени първо за България. Английският е допълнителен език, не основа на продукта.',
-    cta: 'Добави първи срок'
+    cta: 'Добави първи срок',
+    pageTitle: 'Как работи',
+    dataFlowInput: 'Въвеждаш дата',
+    dataFlowProcess: 'Изчислява се в браузъра',
+    dataFlowStorage: 'Пази се в IndexedDB на устройството',
+    dataFlowOutcome: 'Никога не напуска устройството',
+    dataFlow: 'Данните са само на това устройство.',
+    noServer: 'Срокник няма сървър. Никой освен теб не вижда срокниците ти.',
+    openSource: 'Кодът е публичен — можеш да провериш всеки ред.',
+    foundBug: 'Намери грешка?',
+    openIssue: 'Отвори issue',
+    dataSources: 'Данните за срокове са от:',
+    dataLastVerified: 'Последна проверка на данните:',
+    trustTitle: 'Защо да се довериш на Срокник',
+    timelineTitle: (docName: string): string => `Срок на валидност — ${docName}`,
+    feesTitle: (docName: string): string => `Такси — ${docName}`,
+    feesColService: 'Услуга',
+    feesColDuration: 'Срок',
+    feesColPrice: 'Цена',
+    safeZone: 'Зона на сигурност',
+    recommendedRenewal: 'Препоръчителна зона за подмяна',
+    penaltyZone: 'Зона на глоба',
+    issuedLabel: 'Издаване',
+    expiresLabel: 'Изтича',
+    moreLink: 'Виж как работи Срокник'
+  },
+
+  infoPanel: {
+    seeDetails: 'Виж подробности',
+    hideDetails: 'Скрий',
+    validity: 'Валидност',
+    fees: 'Такси',
+    fineRange: 'Глоба при просрочие',
+    requiredDocuments: 'Необходими документи',
+    officialSource: 'Официален сайт',
+    reminderDefault: 'Препоръчително напомняне',
+    importantNote: 'Важно',
+    feesVaryByProvider: 'Цените варират по доставчик. Запази датата — Срокник ще те напомни предварително.',
+    serviceStandard: 'Обикновена',
+    serviceStandardDays: '30 дни',
+    serviceFast: 'Бърза',
+    serviceFastDays: '3 дни',
+    serviceExpress: 'Експресна',
+    serviceExpressHours: '8 часа',
+    serviceRegular: 'Стандарт',
+    daysSuffix: (n: number): string => `${n} ${pluralDays(n)}`
+  },
+
+  currency: {
+    dualDisplayNote: 'До 8 август 2026 г. цените се показват в евро и в лева.'
   }
 };
 

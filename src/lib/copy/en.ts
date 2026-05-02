@@ -394,6 +394,55 @@ export const copy: Copy = {
     bgFirstTitle: 'Bulgarian first',
     bgFirstBody:
       'Categories, copy and links to official systems are made for Bulgaria first. English is an additional language, not the basis of the product.',
-    cta: 'Add first deadline'
+    cta: 'Add first deadline',
+    pageTitle: 'How it works',
+    dataFlowInput: 'You enter a date',
+    dataFlowProcess: 'It’s computed in the browser',
+    dataFlowStorage: 'Stored in IndexedDB on this device',
+    dataFlowOutcome: 'Never leaves your device',
+    dataFlow: 'Your data stays only on this device.',
+    noServer: 'Sroknik has no server. No one but you sees your deadlines.',
+    openSource: 'The code is public — you can verify every line.',
+    foundBug: 'Found a bug?',
+    openIssue: 'Open an issue',
+    dataSources: 'Deadline data sourced from:',
+    dataLastVerified: 'Data last verified:',
+    trustTitle: 'Why you can trust Sroknik',
+    timelineTitle: (docName: string): string => `Validity — ${docName}`,
+    feesTitle: (docName: string): string => `Fees — ${docName}`,
+    feesColService: 'Service',
+    feesColDuration: 'Duration',
+    feesColPrice: 'Price',
+    safeZone: 'Safe zone',
+    recommendedRenewal: 'Recommended renewal window',
+    penaltyZone: 'Penalty zone',
+    issuedLabel: 'Issued',
+    expiresLabel: 'Expires',
+    moreLink: 'See how Sroknik works'
+  },
+
+  infoPanel: {
+    seeDetails: 'See details',
+    hideDetails: 'Hide',
+    validity: 'Validity',
+    fees: 'Fees',
+    fineRange: 'Fine for being overdue',
+    requiredDocuments: 'Required documents',
+    officialSource: 'Official site',
+    reminderDefault: 'Recommended reminder',
+    importantNote: 'Important',
+    feesVaryByProvider: 'Prices vary by provider. Save the date — Sroknik will remind you in advance.',
+    serviceStandard: 'Standard',
+    serviceStandardDays: '30 days',
+    serviceFast: 'Fast',
+    serviceFastDays: '3 days',
+    serviceExpress: 'Express',
+    serviceExpressHours: '8 hours',
+    serviceRegular: 'Standard',
+    daysSuffix: (n: number): string => `${n} ${pluralDays(n)}`
+  },
+
+  currency: {
+    dualDisplayNote: 'Until 8 August 2026 prices are shown in euros and in leva.'
   }
 } as const;

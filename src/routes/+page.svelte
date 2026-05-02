@@ -44,18 +44,6 @@
   <section
     class="relative overflow-hidden rounded-[20px] border border-[var(--color-accent-border)] bg-[linear-gradient(135deg,var(--color-surface)_0%,var(--color-accent-light)_58%,var(--color-warning-light)_100%)] p-5 shadow-[0_18px_60px_rgba(26,25,23,0.08)] md:p-7"
   >
-    <div
-      class="pointer-events-none absolute -right-16 -top-16 h-44 w-44 rounded-full border border-[var(--color-accent-border)] opacity-50"
-      aria-hidden="true"
-    ></div>
-    <div
-      class="pointer-events-none absolute bottom-5 right-6 hidden grid-cols-4 gap-2 opacity-35 md:grid"
-      aria-hidden="true"
-    >
-      {#each Array(16) as _, i (i)}
-        <span class="h-2 w-2 rounded-full bg-accent"></span>
-      {/each}
-    </div>
     <div class="grid gap-6 md:grid-cols-[1.1fr_0.9fr] md:items-center">
       <div>
         <p class="eyebrow mb-3">{t.current.dashboard.overview}</p>

@@ -3,7 +3,10 @@ import type { CategoryDefinition, DeadlineCategory, Provider } from '$lib/types'
 // Universal default reminders (days before due date).
 const DEFAULT_OFFSETS: number[] = [30, 7, 1];
 const SHORT_OFFSETS: number[] = [7, 1]; // monthly bills
-const LONG_OFFSETS: number[] = [60, 30, 7, 1]; // documents
+const VIGNETTE_OFFSETS: number[] = [14, 7, 1];
+const ID_CARD_OFFSETS: number[] = [90, 30, 7, 1]; // 3 months recommended
+const DRIVERS_LICENSE_OFFSETS: number[] = [90, 30, 7, 1];
+const PASSPORT_OFFSETS: number[] = [180, 60, 14, 1]; // airlines often need ≥6 months
 
 // -----------------------------------------------------------------------------
 // Provider directories — verified Bulgarian portals with deep links to login /
@@ -338,7 +341,7 @@ export const CATEGORIES: CategoryDefinition[] = [
     labelEn: 'Vignette',
     descriptionBg: 'Електронна винетка за автомагистрали и първокласни пътища.',
     descriptionEn: 'Electronic toll vignette for Bulgarian motorways.',
-    defaultReminderOffsets: DEFAULT_OFFSETS,
+    defaultReminderOffsets: VIGNETTE_OFFSETS,
     icon: 'Receipt',
     officialLinkLabel: 'bgtoll.bg',
     officialLinkUrl: 'https://www.bgtoll.bg/',
@@ -373,7 +376,7 @@ export const CATEGORIES: CategoryDefinition[] = [
     labelEn: 'Driver’s license',
     descriptionBg: 'Свидетелство за управление на МПС.',
     descriptionEn: 'Driver’s license — issuance and renewal via MVR.',
-    defaultReminderOffsets: LONG_OFFSETS,
+    defaultReminderOffsets: DRIVERS_LICENSE_OFFSETS,
     icon: 'IdCard',
     officialLinkLabel: 'e-uslugi.mvr.bg',
     officialLinkUrl: 'https://e-uslugi.mvr.bg/',
@@ -386,7 +389,7 @@ export const CATEGORIES: CategoryDefinition[] = [
     labelEn: 'ID card',
     descriptionBg: 'Български документ за самоличност.',
     descriptionEn: 'Bulgarian national identity card.',
-    defaultReminderOffsets: LONG_OFFSETS,
+    defaultReminderOffsets: ID_CARD_OFFSETS,
     icon: 'BadgeCheck',
     officialLinkLabel: 'e-uslugi.mvr.bg',
     officialLinkUrl: 'https://e-uslugi.mvr.bg/',
@@ -399,7 +402,7 @@ export const CATEGORIES: CategoryDefinition[] = [
     labelEn: 'Passport',
     descriptionBg: 'Български международен паспорт.',
     descriptionEn: 'Bulgarian international passport.',
-    defaultReminderOffsets: LONG_OFFSETS,
+    defaultReminderOffsets: PASSPORT_OFFSETS,
     icon: 'BookMarked',
     officialLinkLabel: 'e-uslugi.mvr.bg',
     officialLinkUrl: 'https://e-uslugi.mvr.bg/',
