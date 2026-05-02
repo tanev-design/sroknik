@@ -1,12 +1,12 @@
 <script lang="ts">
   import { page } from '$app/stores';
   import { t } from '$lib/copy/i18n.svelte';
-  import { CalendarDays, FileText, Gauge, MoreHorizontal } from 'lucide-svelte';
+  import { CalendarDays, Car, FileText, Gauge, MoreHorizontal } from 'lucide-svelte';
   import type { ComponentType } from 'svelte';
 
   type Tab = {
     href: string;
-    labelKey: 'today' | 'deadlines' | 'documents' | 'more';
+    labelKey: 'today' | 'deadlines' | 'documents' | 'cars' | 'more';
     icon: ComponentType;
     match: (p: string) => boolean;
   };
@@ -23,7 +23,13 @@
       href: '/documents',
       labelKey: 'documents',
       icon: FileText,
-      match: (p) => p.startsWith('/documents') || p.startsWith('/cars')
+      match: (p) => p.startsWith('/documents')
+    },
+    {
+      href: '/cars',
+      labelKey: 'cars',
+      icon: Car,
+      match: (p) => p.startsWith('/cars')
     },
     {
       href: '/settings',
@@ -52,12 +58,12 @@
       <li class="flex-1">
         <a
           href={tab.href}
-          class="relative flex h-14 min-h-[44px] w-full flex-col items-center justify-center gap-0.5 px-2 text-[11px] font-medium transition-colors
+          class="relative flex h-14 min-h-[44px] w-full flex-col items-center justify-center gap-0.5 px-1 text-[10px] font-medium transition-colors min-[390px]:text-[11px]
           {active ? 'text-accent' : 'text-muted hover:text-text'}"
           aria-current={active ? 'page' : undefined}
         >
           <Icon size={17} aria-hidden="true" strokeWidth={1.8} />
-          <span>{t.current.nav[tab.labelKey]}</span>
+          <span class="max-w-full truncate">{t.current.nav[tab.labelKey]}</span>
           <span
             aria-hidden="true"
             class="h-1 w-1 rounded-full {active ? 'bg-accent' : 'bg-transparent'}"
