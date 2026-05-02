@@ -1,0 +1,69 @@
+<script lang="ts">
+  import { page } from '$app/stores';
+  import { t } from '$lib/copy/i18n.svelte';
+  import { CalendarDays, FileText, Gauge, MoreHorizontal } from 'lucide-svelte';
+  import type { ComponentType } from 'svelte';
+
+  type Tab = {
+    href: string;
+    labelKey: 'today' | 'deadlines' | 'documents' | 'more';
+    icon: ComponentType;
+    match: (p: string) => boolean;
+  };
+
+  const tabs: Tab[] = [
+    { href: '/', labelKey: 'today', icon: Gauge, match: (p) => p === '/' },
+    {
+      href: '/deadlines',
+      labelKey: 'deadlines',
+      icon: CalendarDays,
+      match: (p) => p.startsWith('/deadlines')
+    },
+    {
+      href: '/documents',
+      labelKey: 'documents',
+      icon: FileText,
+      match: (p) => p.startsWith('/documents') || p.startsWith('/cars')
+    },
+    {
+      href: '/settings',
+      labelKey: 'more',
+      icon: MoreHorizontal,
+      match: (p) =>
+        p.startsWith('/settings') ||
+        p.startsWith('/plus') ||
+        p.startsWith('/how-it-works') ||
+        p.startsWith('/legal') ||
+        p.startsWith('/privacy') ||
+        p.startsWith('/cookies') ||
+        p.startsWith('/terms')
+    }
+  ];
+</script>
+
+<nav
+  aria-label={t.current.nav.today}
+  class="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-surface/95 backdrop-blur md:hidden"
+>
+  <ul class="mx-auto flex w-full max-w-[960px] items-stretch justify-around safe-bottom">
+    {#each tabs as tab (tab.href)}
+      {@const active = tab.match($page.url.pathname)}
+      {@const Icon = tab.icon}
+      <li class="flex-1">
+        <a
+          href={tab.href}
+          class="relative flex h-14 min-h-[44px] w-full flex-col items-center justify-center gap-0.5 px-2 text-[11px] font-medium transition-colors
+          {active ? 'text-accent' : 'text-muted hover:text-text'}"
+          aria-current={active ? 'page' : undefined}
+        >
+          <Icon size={17} aria-hidden="true" strokeWidth={1.8} />
+          <span>{t.current.nav[tab.labelKey]}</span>
+          <span
+            aria-hidden="true"
+            class="h-1 w-1 rounded-full {active ? 'bg-accent' : 'bg-transparent'}"
+          ></span>
+        </a>
+      </li>
+    {/each}
+  </ul>
+</nav>

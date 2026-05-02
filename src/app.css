@@ -1,0 +1,165 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans:
+    'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
+
+  /* Base palette */
+  --color-bg: #f9f7f4;
+  --color-surface: #ffffff;
+  --color-elevated: #fbf9f6;
+  --color-border: #e8e4df;
+  --color-border-strong: #d6d1c9;
+  --color-text: #1a1917;
+  --color-text-soft: #3a3530;
+  --color-muted: #7a736b;
+  --color-accent: #1e5c3a;
+  --color-accent-light: #ebf3ee;
+  --color-accent-border: #c9d9ce;
+  --color-danger: #b84040;
+  --color-danger-light: #f6e6e6;
+  --color-warning: #9a6b1a;
+  --color-warning-light: #f6ecdb;
+
+  /* Radii */
+  --radius-card: 14px;
+  --radius-control: 10px;
+  --radius-pill: 999px;
+
+  /* Shadows — subtle, calm */
+  --shadow-card: 0 1px 2px rgba(26, 25, 23, 0.04), 0 2px 6px rgba(26, 25, 23, 0.03);
+  --shadow-sheet: 0 -8px 32px rgba(26, 25, 23, 0.08);
+
+  /* Motion */
+  --ease-quiet: cubic-bezier(0.2, 0.6, 0.2, 1);
+  --duration-quiet: 180ms;
+}
+
+:root.dark {
+  color-scheme: dark;
+  --color-bg: #11110f;
+  --color-surface: #1a1916;
+  --color-elevated: #222018;
+  --color-border: #302d27;
+  --color-border-strong: #494237;
+  --color-text: #f4efe7;
+  --color-text-soft: #ddd4c8;
+  --color-muted: #aaa096;
+  --color-accent: #5cc082;
+  --color-accent-light: #173823;
+  --color-accent-border: #315b3f;
+  --color-danger: #ff8c8c;
+  --color-danger-light: #3b1f1f;
+  --color-warning: #e3b461;
+  --color-warning-light: #352818;
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.22), 0 12px 30px rgba(0, 0, 0, 0.18);
+  --shadow-sheet: 0 -8px 32px rgba(0, 0, 0, 0.45);
+}
+
+/* Base resets scoped to Сроkник */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+  overscroll-behavior: none;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-feature-settings:
+    'ss01' on,
+    'cv11' on;
+  line-height: 1.6;
+  font-size: 16px;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  /* svh = stable viewport height (does not animate with iOS address bar) */
+  min-height: 100svh;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 18% 8%, color-mix(in srgb, var(--color-accent) 12%, transparent), transparent 30%),
+    linear-gradient(120deg, transparent 0%, color-mix(in srgb, var(--color-warning-light) 42%, transparent) 100%);
+  opacity: 0.55;
+}
+
+/* App wrapper isolates horizontal-scroll clipping per global rules — keep
+   it off html/body to avoid Chromium-iOS toolbar resize loops. */
+.app-wrapper {
+  overflow-x: clip;
+  min-height: 100svh;
+}
+
+/* iOS safe-area aware bottom padding for fixed nav and FAB */
+.safe-bottom {
+  padding-bottom: calc(env(safe-area-inset-bottom) + 0.75rem);
+}
+.safe-bottom-lg {
+  padding-bottom: calc(env(safe-area-inset-bottom) + 5.5rem);
+}
+
+/* Focus ring — accessible, calm */
+:where(a, button, [role='button'], input, select, textarea):focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Tabular numerals for any element bearing numbers we want aligned. */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Prevent text selection on tappable controls */
+button,
+[role='button'] {
+  user-select: none;
+}
+
+/* Scrollbar polish */
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 10px;
+}
+
+/* Hide number spinners where we use type=number internally */
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Native date picker chrome — keep it minimal and consistent with our text inputs. */
+input[type='date'] {
+  font-family: inherit;
+}
+input[type='date']::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+/* Editorial uppercase eyebrow rhythm */
+.eyebrow {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+/* Hairline divider used between settings rows / list rows. */
+.hairline {
+  border-bottom: 1px solid var(--color-border);
+}
