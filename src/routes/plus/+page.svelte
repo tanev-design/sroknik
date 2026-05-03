@@ -13,7 +13,6 @@
   const isPlus = $derived(
     settingsStore.current.plan === 'plus' || !!settingsStore.current.plusActivated
   );
-  const keyHint = $derived(settingsStore.current.plusLicenseKeyHint ?? null);
   const subStatus = $derived(settingsStore.current.plusSubscriptionStatus ?? null);
   const periodEnd = $derived(settingsStore.current.plusCurrentPeriodEnd ?? null);
   const priceId = $derived(settingsStore.current.plusPriceId ?? null);
@@ -161,11 +160,6 @@
           {:else if renewalLabel}
             <p class="mt-2 text-sm text-muted">
               {t.current.plusV2.renewsOn(renewalLabel)}
-            </p>
-          {/if}
-          {#if keyHint}
-            <p class="mt-2 text-sm text-muted">
-              {t.current.plusV2.activeKeyLabel}: <span class="font-mono">····{keyHint}</span>
             </p>
           {/if}
         </div>

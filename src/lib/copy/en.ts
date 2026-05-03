@@ -571,12 +571,12 @@ export const copy: Copy = {
     autoActivating: 'Activating your subscription\u2026',
     autoActivateFailed: 'Could not activate automatically.',
     autoActivateFailedHint:
-      'Check your inbox \u2014 we have emailed your license key. If you cannot find it, contact support@sroknik.com.',
+      'Reload this page in a moment. If the issue persists, contact support@sroknik.com and we will activate your account manually.',
     buyCta: 'Buy Sroknik Plus',
     priceEur: '\u20ac3 / mo',
     priceBgn: 'or \u20ac25 / yr',
     stripeNote:
-      'Payment is processed by Stripe. We do not see your payment details. You receive a license key by email right after paying.',
+      'Payment is processed by Stripe. We do not see your payment details. Plus activates automatically as soon as the payment succeeds.',
     haveKey: 'Already have a license key?',
     keyPlaceholder: 'SRKN-XXXX-XXXX-XXXX-XXXX',
     activating: '\u2026',
@@ -610,8 +610,6 @@ export const copy: Copy = {
     trust: {
       dataYoursTitle: 'Your data stays yours',
       dataYoursBody: 'Nothing is uploaded to the cloud. Plus only raises the limits.',
-      noSubTitle: 'No subscription',
-      noSubBody: 'Pay once. The key works on up to 3 devices.',
       cancelTitle: 'Cancel anytime',
       cancelBody: 'One click in the Stripe portal — no calls, no forms.',
       noRiskTitle: 'No risk',
@@ -624,12 +622,12 @@ export const copy: Copy = {
         a: 'Your data stays on your device and remains fully accessible. Plus only allows adding new records above the limit \u2014 existing ones are never locked.'
       },
       {
-        q: 'Can I use the key on phone and desktop?',
-        a: 'Yes \u2014 the key can be activated on up to 3 devices. If you switch devices, get in touch with us.'
+        q: 'Can I use Plus on phone and desktop?',
+        a: 'Yes \u2014 your subscription works on up to 3 devices. On every new device, just open the Plus page after paying and it activates automatically.'
       },
       {
-        q: 'How do I get the key?',
-        a: 'Right after payment, Stripe notifies us and the key arrives at the email address you used to pay. Keep it safe \u2014 we do not resend it.'
+        q: 'How does activation work after payment?',
+        a: 'Automatically. Stripe sends you back to the app and Plus turns on within seconds \u2014 no keys, no copy-paste.'
       },
       {
         q: 'How do I cancel?',
@@ -641,7 +639,7 @@ export const copy: Copy = {
       },
       {
         q: 'Do you sell my data?',
-        a: 'No. We store nothing beyond a hash of your email (so we know the key is valid).'
+        a: 'No. We store nothing beyond a hash of your email, used only to validate the subscription.'
       }
     ]
   },
