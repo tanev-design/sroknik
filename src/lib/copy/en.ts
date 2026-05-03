@@ -520,5 +520,157 @@ export const copy: Copy = {
   signature: {
     line: 'Crafted with care by tanev.design · Plovdiv',
     href: 'https://tanev.design'
+  },
+
+  dbError: {
+    title: 'Database is not available',
+    body:
+      'Sroknik uses your browser\u2019s built-in storage. Check that you are not in a private window and that the browser is not blocking local storage.'
+  },
+
+  undo: 'Undo',
+
+  onboardingV2: {
+    step1: {
+      title: 'Never miss another deadline',
+      body:
+        'Sroknik tracks your personal deadlines \u2014 vignette, technical inspection, ID card, bills. All in one place, no sign-up.',
+      cta: 'Add your first deadline'
+    },
+    step2: {
+      title: 'Your data stays on your device',
+      body:
+        'Nothing is uploaded to the cloud. No national ID, no bank details, no documents. Sroknik runs entirely in your browser \u2014 even offline.',
+      cta: 'Got it'
+    },
+    step3: {
+      title: 'Set up reminders',
+      body:
+        'Sroknik can remind you in time \u2014 30 days, 14 days or 3 days before the deadline. You choose when.',
+      cta: 'Enable notifications',
+      ctaSkip: 'Later'
+    }
+  },
+
+  plusV2: {
+    eyebrow: 'Sroknik Plus',
+    headline: 'For people with more deadlines',
+    lede:
+      'The free plan is enough for one person with one car. Plus is for families, people with more vehicles, or anyone tracking more than 10 deadlines.',
+    oneTimeLabel: 'One-time payment \u00b7 No subscription',
+    buyCta: 'Buy Sroknik Plus',
+    priceEur: '\u20ac4.99',
+    priceBgn: 'or 9.99 BGN',
+    stripeNote:
+      'Payment is processed by Stripe. We do not see your payment details. You receive a license key by email right after paying.',
+    haveKey: 'Already have a license key?',
+    keyPlaceholder: 'SRKN-XXXX-XXXX-XXXX-XXXX',
+    activating: '\u2026',
+    activateCta: 'Activate',
+    activeTitle: 'Sroknik Plus is active',
+    activeKeyLabel: 'Key',
+    activateErrors: {
+      invalidFormat: 'Key must be in the format SRKN-XXXX-XXXX-XXXX-XXXX.',
+      notFound: 'Key not found.',
+      revoked: 'This key has been revoked.',
+      tooManyActivations: 'This key has reached its device limit (3).',
+      rateLimited: 'Too many attempts. Try again in an hour.',
+      networkError: 'Connection error. Check your internet connection.',
+      serverError: 'Temporary server error. Try again in a moment.'
+    },
+    comparisonTitle: 'Plan comparison',
+    colFree: 'Free',
+    colPlus: 'Plus',
+    rows: [
+      { label: 'People / family', free: '1', plus: '6' },
+      { label: 'Cars', free: '1', plus: '5' },
+      { label: 'Document sets', free: '1', plus: 'Unlimited' },
+      { label: 'Custom deadlines', free: '10', plus: 'Unlimited' },
+      { label: 'Browser notifications', free: '\u2713', plus: '\u2713' },
+      { label: 'Calendar (.ics) export', free: '\u2713', plus: '\u2713' },
+      { label: 'JSON backup', free: '\u2713', plus: '\u2713' },
+      { label: 'Works offline', free: '\u2713', plus: '\u2713' },
+      { label: 'No ads, forever', free: '\u2713', plus: '\u2713' }
+    ],
+    trust: {
+      dataYoursTitle: 'Your data stays yours',
+      dataYoursBody: 'Nothing is uploaded to the cloud. Plus only raises the limits.',
+      noSubTitle: 'No subscription',
+      noSubBody: 'Pay once. The key works on up to 3 devices.',
+      noRiskTitle: 'No risk',
+      noRiskBody: 'Free features stay free forever. Plus only adds on top.'
+    },
+    faqTitle: 'Questions',
+    faq: [
+      {
+        q: 'What happens to my data if I don\u2019t continue?',
+        a: 'Your data stays on your device and remains fully accessible. Plus only allows adding new records above the limit \u2014 existing ones are never locked.'
+      },
+      {
+        q: 'Can I use the key on phone and desktop?',
+        a: 'Yes \u2014 the key can be activated on up to 3 devices. If you switch devices, get in touch with us.'
+      },
+      {
+        q: 'How do I get the key?',
+        a: 'Right after payment, Stripe notifies us and the key arrives at the email address you used to pay. Keep it safe \u2014 we do not resend it.'
+      },
+      {
+        q: 'Do you sell my data?',
+        a: 'No. We store nothing beyond a hash of your email (so we know the key is valid).'
+      }
+    ]
+  },
+
+  emptyStates: {
+    today: {
+      title: 'Nothing for today',
+      subtitle: 'All your deadlines are on time. Add new ones with the + button.'
+    },
+    deadlines: {
+      title: 'No deadlines yet',
+      subtitle: 'Add the first one \u2014 vignette, civil liability, or something of your own.',
+      cta: '+ Add deadline'
+    },
+    cars: {
+      title: 'No cars added',
+      subtitle: 'Add a car to link deadlines to a specific vehicle.',
+      cta: '+ Add car'
+    },
+    documents: {
+      title: 'No document sets',
+      subtitle: 'Group deadlines by person \u2014 ID card, passport, driver\u2019s licence.',
+      cta: '+ Add set'
+    },
+    completed: {
+      title: 'No completed deadlines',
+      subtitle: 'Mark a deadline complete to see it here.'
+    },
+    archived: {
+      title: 'Archive is empty',
+      subtitle: 'Archived deadlines stay here without cluttering the main list.'
+    }
+  },
+
+  planLimitV2: {
+    cars: { hit: 'You reached the limit of 1 car.', plus: 'Plus adds up to 5 cars.' },
+    people: { hit: 'You reached the limit of 1 person.', plus: 'Plus adds up to 6 profiles.' },
+    deadlines: { hit: 'You reached the limit of 10 deadlines.', plus: 'Plus gives unlimited deadlines.' },
+    documents: {
+      hit: 'You reached the limit of 1 document set.',
+      plus: 'Plus gives unlimited sets.'
+    },
+    ctaViewPlus: 'See Plus'
+  },
+
+  settingsV2: {
+    plan: 'Plan',
+    planFree: 'Free plan',
+    planPlusActive: 'Sroknik Plus active',
+    planUsage: (deadlines: number, cars: number): string =>
+      `${deadlines}/10 deadlines \u00b7 ${cars}/1 car`,
+    seePlus: 'See Plus',
+    quickAddLabel: 'Quick category pick',
+    calendarPickerPlaceholder: 'Pick a date',
+    weekdaysShort: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
   }
 } as const;

@@ -22,8 +22,21 @@ export default defineConfig({
         start_url: '/',
         scope: '/',
         icons: [
-          // SVG works on modern Chromium/Safari installs. For wider compatibility
-          // generate PNG variants into /static/icons/ — see README.md.
+          // PNG variants are required for wide install compatibility
+          // (older iOS and Android launchers ignore SVG manifest icons).
+          // Generate with: npm run icons
+          {
+            src: '/icons/icon-192.png',
+            sizes: '192x192',
+            type: 'image/png',
+            purpose: 'any maskable'
+          },
+          {
+            src: '/icons/icon-512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'any maskable'
+          },
           {
             src: '/icons/icon-192.svg',
             sizes: '192x192',
@@ -34,7 +47,7 @@ export default defineConfig({
             src: '/icons/icon-512.svg',
             sizes: '512x512',
             type: 'image/svg+xml',
-            purpose: 'any maskable'
+            purpose: 'any'
           }
         ]
       },

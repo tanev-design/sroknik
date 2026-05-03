@@ -3,6 +3,7 @@
   import AppShell from '$lib/components/layout/AppShell.svelte';
   import BottomNav from '$lib/components/layout/BottomNav.svelte';
   import CookieNotice from '$lib/components/shared/CookieNotice.svelte';
+  import DbErrorBoundary from '$lib/components/shared/DbErrorBoundary.svelte';
   import ToastContainer from '$lib/components/ui/ToastContainer.svelte';
   import { settingsStore } from '$lib/stores/settings.svelte';
   import { page } from '$app/stores';
@@ -61,9 +62,11 @@
   });
 </script>
 
-<AppShell>
-  {@render children()}
-</AppShell>
-<BottomNav />
-<CookieNotice />
-<ToastContainer />
+<DbErrorBoundary>
+  <AppShell>
+    {@render children()}
+  </AppShell>
+  <BottomNav />
+  <CookieNotice />
+  <ToastContainer />
+</DbErrorBoundary>

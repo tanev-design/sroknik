@@ -1,0 +1,10 @@
+# <type>(<scope>): <short, imperative description>
+#
+# Types: feat, fix, chore, style, refactor, test, docs, perf
+# Scope: optional, e.g. deadline, plus, worker, ui, copy
+# Body (optional): what & why, not how. Wrap at 72 chars.
+#
+# Examples:
+#   feat(deadline): add swipe-to-complete gesture
+#   fix(worker): validate license key format before KV lookup
+#   chore(icons): generate PNG variants for PWA manifest
