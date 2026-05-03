@@ -568,6 +568,10 @@ export const copy: Copy = {
     pastDueNotice: 'Payment failed. Open \u201cManage subscription\u201d to update your card.',
     canceledNotice: 'Subscription canceled.',
     loadingCheckout: 'Loading checkout\u2026',
+    autoActivating: 'Activating your subscription\u2026',
+    autoActivateFailed: 'Could not activate automatically.',
+    autoActivateFailedHint:
+      'Check your inbox \u2014 we have emailed your license key. If you cannot find it, contact support@sroknik.com.',
     buyCta: 'Buy Sroknik Plus',
     priceEur: '\u20ac3 / mo',
     priceBgn: 'or \u20ac25 / yr',

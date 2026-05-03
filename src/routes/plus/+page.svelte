@@ -5,10 +5,10 @@
   import { deadlinesStore } from '$lib/stores/deadlines.svelte';
   import { carsStore } from '$lib/stores/cars.svelte';
   import { peopleStore } from '$lib/stores/people.svelte';
-  import { settingsRepo, type ActivateErrorCode } from '$lib/db/repositories/settings';
+  import { settingsRepo } from '$lib/db/repositories/settings';
   import { t } from '$lib/copy/i18n.svelte';
   import { toast } from '$lib/stores/toast.svelte';
-  import { Check, Download, ExternalLink, Lock, Shield, Zap } from 'lucide-svelte';
+  import { Check, Download, ExternalLink, Loader2, Lock, Shield, Zap } from 'lucide-svelte';
 
   const isPlus = $derived(
     settingsStore.current.plan === 'plus' || !!settingsStore.current.plusActivated
@@ -17,10 +17,6 @@
   const subStatus = $derived(settingsStore.current.plusSubscriptionStatus ?? null);
   const periodEnd = $derived(settingsStore.current.plusCurrentPeriodEnd ?? null);
   const priceId = $derived(settingsStore.current.plusPriceId ?? null);
-
-  let licenseKey = $state('');
-  let activating = $state(false);
-  let errorCode = $state<ActivateErrorCode | null>(null);
 
   const usage = $derived({
     deadlines: deadlinesStore.active.length,
@@ -35,25 +31,53 @@
   const monthlyPriceId = import.meta.env.VITE_STRIPE_PRICE_MONTHLY as string | undefined;
   const yearlyPriceId = import.meta.env.VITE_STRIPE_PRICE_YEARLY as string | undefined;
 
-  // Load Stripe pricing-table script once when the embed is configured.
-  let pricingTableLoaded = $state(false);
+  // Load Stripe pricing-table script. The custom element upgrades in place
+  // whenever the script finishes — no need to gate rendering on load state.
   onMount(() => {
-    if (!pricingTableId || !publishableKey) return;
-    const existing = document.querySelector(
-      'script[src="https://js.stripe.com/v3/pricing-table.js"]'
-    );
-    if (existing) {
-      pricingTableLoaded = true;
+    if (pricingTableId && publishableKey) {
+      if (!document.querySelector('script[src="https://js.stripe.com/v3/pricing-table.js"]')) {
+        const s = document.createElement('script');
+        s.src = 'https://js.stripe.com/v3/pricing-table.js';
+        s.async = true;
+        document.head.appendChild(s);
+      }
+    }
+
+    // Auto-activation after Stripe Checkout success. Stripe substitutes
+    // {CHECKOUT_SESSION_ID} in the pricing-table success URL → arrives here.
+    const params = new URLSearchParams(window.location.search);
+    const sessionId = params.get('session_id');
+    if (sessionId) void autoActivate(sessionId);
+  });
+
+  let autoState = $state<'idle' | 'working' | 'failed'>('idle');
+
+  async function autoActivate(sessionId: string): Promise<void> {
+    if (settingsStore.current.plusActivated) {
+      cleanUrl();
       return;
     }
-    const s = document.createElement('script');
-    s.src = 'https://js.stripe.com/v3/pricing-table.js';
-    s.async = true;
-    s.onload = () => {
-      pricingTableLoaded = true;
-    };
-    document.head.appendChild(s);
-  });
+    autoState = 'working';
+    const key = await settingsRepo.lookupBySession(sessionId);
+    if (!key) {
+      autoState = 'failed';
+      return;
+    }
+    const res = await settingsRepo.activatePlus(key);
+    if (res.ok) {
+      autoState = 'idle';
+      toast.success(t.current.plusV2.activeTitle);
+      cleanUrl();
+    } else {
+      autoState = 'failed';
+    }
+  }
+
+  function cleanUrl(): void {
+    const url = new URL(window.location.href);
+    url.searchParams.delete('session_id');
+    window.history.replaceState({}, '', url.toString());
+  }
 
   const planLabel = $derived.by(() => {
     if (priceId && yearlyPriceId && priceId === yearlyPriceId) return t.current.plusV2.planYearly;
@@ -71,45 +95,6 @@
     });
   });
 
-  async function activate(): Promise<void> {
-    if (!licenseKey.trim()) return;
-    activating = true;
-    errorCode = null;
-    const res = await settingsRepo.activatePlus(licenseKey);
-    activating = false;
-    if (res.ok) {
-      licenseKey = '';
-      toast.success(t.current.plusV2.activeTitle);
-    } else {
-      errorCode = res.error ?? 'server_error';
-    }
-  }
-
-  const errorMessage = $derived.by(() => {
-    if (!errorCode) return '';
-    const map = t.current.plusV2.activateErrors;
-    switch (errorCode) {
-      case 'invalid_format':
-      case 'invalid_key':
-        return map.invalidFormat;
-      case 'not_found':
-        return map.notFound;
-      case 'revoked':
-        return map.revoked;
-      case 'inactive':
-        return map.inactive;
-      case 'too_many_activations':
-        return map.tooManyActivations;
-      case 'rate_limited':
-        return map.rateLimited;
-      case 'network_error':
-        return map.networkError;
-      case 'misconfigured':
-      case 'server_error':
-      default:
-        return map.serverError;
-    }
-  });
 </script>
 
 <svelte:head>
@@ -130,6 +115,18 @@
       {t.current.plusV2.lede}
     </p>
   </section>
+
+  {#if autoState === 'working'}
+    <div class="glass-card flex items-center gap-3 rounded-[var(--radius-card)] p-4">
+      <Loader2 size={18} class="shrink-0 animate-spin text-accent" aria-hidden="true" />
+      <p class="text-sm text-text">{t.current.plusV2.autoActivating}</p>
+    </div>
+  {:else if autoState === 'failed'}
+    <div class="glass-card rounded-[var(--radius-card)] border border-[var(--color-danger)]/30 p-4">
+      <p class="text-sm text-text">{t.current.plusV2.autoActivateFailed}</p>
+      <p class="mt-1 text-xs text-muted">{t.current.plusV2.autoActivateFailedHint}</p>
+    </div>
+  {/if}
 
   {#if isPlus}
     <!-- Already activated -->
@@ -186,10 +183,8 @@
         </div>
       </div>
 
-      {#if pricingTableId && publishableKey && pricingTableLoaded}
+      {#if pricingTableId && publishableKey}
         {@html `<stripe-pricing-table pricing-table-id="${pricingTableId}" publishable-key="${publishableKey}"></stripe-pricing-table>`}
-      {:else if pricingTableId && publishableKey}
-        <div class="py-8 text-center text-sm text-muted">{t.current.plusV2.loadingCheckout}</div>
       {:else}
         <button
           type="button"
@@ -203,34 +198,6 @@
       <p class="mt-3 text-center text-xs text-muted">
         {t.current.plusV2.stripeNote}
       </p>
-    </div>
-
-    <!-- Activate key -->
-    <div class="glass-card rounded-[var(--radius-card)] p-5">
-      <p class="mb-3 text-sm font-medium text-text">{t.current.plusV2.haveKey}</p>
-      <div class="flex gap-2">
-        <input
-          data-testid="plus-key-input"
-          bind:value={licenseKey}
-          placeholder={t.current.plusV2.keyPlaceholder}
-          class="h-11 flex-1 rounded-[var(--radius-control)] border border-border bg-bg px-3 font-mono text-sm text-text placeholder:text-muted focus:border-accent focus:outline-none"
-          onkeydown={(e) => {
-            if (e.key === 'Enter') void activate();
-          }}
-        />
-        <button
-          data-testid="plus-activate-button"
-          type="button"
-          onclick={() => void activate()}
-          disabled={activating || !licenseKey.trim()}
-          class="rounded-[var(--radius-control)] bg-accent px-4 text-sm font-medium text-white transition-opacity hover:bg-accent/90 disabled:opacity-50"
-        >
-          {activating ? t.current.plusV2.activating : t.current.plusV2.activateCta}
-        </button>
-      </div>
-      {#if errorMessage}
-        <p class="mt-2 text-xs text-[var(--color-danger)]">{errorMessage}</p>
-      {/if}
     </div>
   {/if}
 

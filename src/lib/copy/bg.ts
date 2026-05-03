@@ -567,6 +567,10 @@ export const copy = {
       'Плащането не премина. Отвори „Управлявай абонамента“, за да обновиш картата си.',
     canceledNotice: 'Абонаментът е прекратен.',
     loadingCheckout: 'Зарежда плащане…',
+    autoActivating: 'Активираме твоя абонамент…',
+    autoActivateFailed: 'Не успяхме да активираме автоматично.',
+    autoActivateFailedHint:
+      'Провери имейла си — изпратили сме лицензен ключ. Ако не го намираш, пиши на support@sroknik.com.',
     buyCta: 'Купи Срокник Plus',
     priceEur: '€3 / мес',
     priceBgn: 'или €25 / год',

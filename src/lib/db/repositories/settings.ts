@@ -161,6 +161,41 @@ export const settingsRepo = {
   },
 
   /**
+   * Resolve a Stripe Checkout session id to its issued license key.
+   * Polls briefly to absorb webhook latency. Returns null if not found.
+   */
+  async lookupBySession(sessionId: string): Promise<string | null> {
+    const workerUrl = getWorkerUrl();
+    if (!workerUrl) return null;
+
+    // Retry schedule: total ~13s. Webhooks usually land within 1-3s.
+    const delays = [0, 1500, 3000, 4000, 5000];
+    for (const delay of delays) {
+      if (delay) await new Promise((r) => setTimeout(r, delay));
+      let res: Response;
+      try {
+        res = await fetch(`${workerUrl}/lookup`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ session_id: sessionId })
+        });
+      } catch {
+        continue;
+      }
+      if (res.status === 429) return null;
+      let data: { ok?: boolean; key?: string; error?: string } = {};
+      try {
+        data = (await res.json()) as { ok?: boolean; key?: string; error?: string };
+      } catch {
+        continue;
+      }
+      if (data.ok && data.key) return data.key;
+      if (data.error && data.error !== 'pending') return null;
+    }
+    return null;
+  },
+
+  /**
    * Re-check the license against the worker. Downgrades the local plan if the
    * subscription was canceled, expired, or revoked. Throttled to once per day.
    * Safe to call on app launch — silent on network errors.

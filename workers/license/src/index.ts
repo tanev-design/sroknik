@@ -94,6 +94,10 @@ export default {
       return handleStatus(req, env, corsHeaders);
     }
 
+    if (url.pathname === '/lookup' && req.method === 'POST') {
+      return handleLookup(req, env, corsHeaders);
+    }
+
     if (url.pathname === '/webhook' && req.method === 'POST') {
       return handleWebhook(req, env, corsHeaders);
     }
@@ -163,6 +167,46 @@ async function handleActivate(
 }
 
 // ── /status ─────────────────────────────────────────────────────────────────
+
+async function handleLookup(
+  req: Request,
+  env: Env,
+  cors: Record<string, string>
+): Promise<Response> {
+  // Same per-IP limit as /activate to discourage session-id enumeration.
+  const ip = req.headers.get('CF-Connecting-IP') ?? 'unknown';
+  const rateKey = `rate:${ip}`;
+  const raw = await env.LICENSES.get(rateKey);
+  const count = raw ? parseInt(raw, 10) || 0 : 0;
+  if (count >= RATE_LIMIT_PER_HOUR) {
+    return json({ ok: false, error: 'rate_limited' }, cors, 429);
+  }
+  await env.LICENSES.put(rateKey, String(count + 1), { expirationTtl: 3600 });
+
+  let sessionId: string;
+  try {
+    const body = (await req.json()) as { session_id?: unknown };
+    if (typeof body.session_id !== 'string') {
+      return json({ ok: false, error: 'invalid_session' }, cors, 400);
+    }
+    sessionId = body.session_id.trim();
+  } catch {
+    return json({ ok: false, error: 'invalid_body' }, cors, 400);
+  }
+
+  // Stripe Checkout session ids look like cs_live_... or cs_test_...
+  if (!/^cs_(live|test)_[A-Za-z0-9]{20,}$/.test(sessionId)) {
+    return json({ ok: false, error: 'invalid_session' }, cors, 400);
+  }
+
+  const key = await env.LICENSES.get(`cs:${sessionId}`);
+  if (!key) {
+    // Webhook may not have processed yet; client should retry briefly.
+    return json({ ok: false, error: 'pending' }, cors, 404);
+  }
+
+  return json({ ok: true, key }, cors);
+}
 
 async function handleStatus(
   req: Request,
@@ -284,12 +328,21 @@ async function onCheckoutCompleted(event: StripeEvent, env: Env): Promise<void> 
 
   const subscriptionId = typeof session.subscription === 'string' ? session.subscription : '';
   const customerId = typeof session.customer === 'string' ? session.customer : '';
+  const sessionId = typeof session.id === 'string' ? session.id : '';
   if (!subscriptionId) return;
 
-  // Idempotency: if this subscription already has a key, do nothing.
+  // Idempotency: if this subscription already has a key, only ensure the
+  // session-id reverse mapping exists (in case the user retried checkout).
   const reverseKey = `sub:${subscriptionId}`;
   const existing = await env.LICENSES.get(reverseKey);
-  if (existing) return;
+  if (existing) {
+    if (sessionId) {
+      // 7-day TTL — long enough for the success-page redirect, short enough
+      // to limit exposure if the URL leaks.
+      await env.LICENSES.put(`cs:${sessionId}`, existing, { expirationTtl: 7 * 24 * 60 * 60 });
+    }
+    return;
+  }
 
   const key = await generateLicenseKey(email, env.HMAC_SECRET);
   const emailHash = await sha256(email.toLowerCase().trim());
@@ -304,6 +357,9 @@ async function onCheckoutCompleted(event: StripeEvent, env: Env): Promise<void> 
   };
   await env.LICENSES.put(key, JSON.stringify(record));
   await env.LICENSES.put(reverseKey, key);
+  if (sessionId) {
+    await env.LICENSES.put(`cs:${sessionId}`, key, { expirationTtl: 7 * 24 * 60 * 60 });
+  }
 
   try {
     await sendLicenseEmail(email, key, env.RESEND_API_KEY);
