@@ -38,6 +38,7 @@ export const copy: Copy = {
     plus: 'Plus',
     howItWorks: 'Trust',
     legal: 'Legal',
+    welcome: 'Welcome',
     more: 'More'
   },
 
@@ -87,7 +88,7 @@ export const copy: Copy = {
       'Choose a category, date and optionally a person or car. Sroknik stores only what the reminder needs.',
     trustTitle: 'Why it is trustworthy',
     trustBody:
-      'No account, no national ID number, no document uploads and no ad tracking. Your data stays in this browser on this device.',
+      'Optional account, no national ID number, no document uploads and no ad tracking. Your data stays in this browser on this device unless you choose to sync.',
     legalTitle: 'Ready for a public website',
     legalBody:
       'Privacy, cookie and terms pages are included. We avoid fake certificates and explain exactly what the app does.',
@@ -200,22 +201,49 @@ export const copy: Copy = {
   privacy: {
     sectionTitle: 'Privacy',
     headline: 'Less collected data means less risk.',
-    noProfile: 'No account.',
+    noProfile: 'Account is optional.',
     noEGN: 'No national ID number.',
-    noBankData: 'No bank data.',
+    noBankData: 'No bank data on the free plan.',
     noUploads: 'No document uploads.',
     noTracking: 'No analytics, no ads, no tracking.',
     localOnly: 'Your data stays on this device.',
-    noCloud: 'Sroknik does not store your deadlines in the cloud.',
+    noCloud: 'The free plan does not store your deadlines in the cloud.',
     youDecide: 'You choose when to export or delete your data.',
     onlyWhatNeeded: 'We do not collect data that your deadlines do not need.'
+  },
+
+  auth: {
+    signIn: 'Sign in',
+    signUp: 'Sign up',
+    signOut: 'Sign out',
+    continueWithoutLogin: 'Continue without login',
+    optional: 'Optional',
+    requiredForPlus: 'Sign in to unlock Plus',
+    title: 'Sign in to Sroknik',
+    subtitle: 'Sign in to sync your deadlines or unlock Plus. Optional — the free plan works without an account.',
+    emailField: 'Email',
+    emailPlaceholder: 'you@example.com',
+    passwordField: 'Password',
+    passwordPlaceholder: 'At least 6 characters',
+    google: 'Continue with Google',
+    github: 'Continue with GitHub',
+    emailMode: 'Sign in with email',
+    signUpMode: 'Create account',
+    switchToSignUp: 'New to Sroknik? Create an account',
+    switchToSignIn: 'Have an account? Sign in',
+    confirmEmailHint: 'We sent you a confirmation email. Check your inbox.',
+    invalidCredentials: 'Wrong email or password.',
+    weakPassword: 'Password is too short.',
+    networkError: 'No connection. Try again.',
+    or: 'or',
+    unavailable: 'Optional sign-in is not configured in this build.'
   },
 
   onboarding: {
     step1Title: 'All important deadlines, calmly organized.',
     step1Sub: 'Cars, documents and payments, without unnecessary data.',
-    step2Title: 'No account. No national ID number.',
-    step2Sub: 'No bank data. Your data stays on this device.',
+    step2Title: 'Account is optional.',
+    step2Sub: 'The free plan works without an account. Sign in only for Plus or sync.',
     step3Title: 'Start with your first deadline.',
     step3Sub: 'A car, document, or bill.',
     step3Cta: 'Add first deadline',
@@ -226,7 +254,34 @@ export const copy: Copy = {
   trust: {
     cardTitle: 'Local by design',
     cardBody:
-      'Deadlines are stored in this browser on this device. Export and deletion stay under your control.'
+      'The free plan keeps deadlines locally. Sign-in is optional — only needed for Plus and sync.'
+  },
+
+  welcome: {
+    eyebrow: 'Sroknik',
+    heroTitle: 'Your important deadlines, calmly in one place.',
+    heroBody:
+      'Vignette, civil liability, technical inspection, ID card, passport, and bills — Sroknik reminds you in time. Free. No account required.',
+    primaryCta: 'Open dashboard',
+    secondaryCta: 'Sign in or create account',
+    guestCta: 'Continue without login',
+    guestNote: 'The free plan works without an account.',
+    feature1Title: 'Local by default',
+    feature1Body:
+      'Deadlines are stored in your browser. Sign-in is optional and only used for sync and Plus.',
+    feature2Title: 'Bulgarian first',
+    feature2Body:
+      'Categories and links to official systems are made for Bulgaria first. English is an additional language.',
+    feature3Title: 'No noise',
+    feature3Body:
+      'No ad cookies, no tracking, no nagging notifications. Sroknik works quietly.',
+    plansTitle: 'Two plans. One clean approach.',
+    freePlan: 'Free',
+    freePlanLine: 'Enough for one person, one car, up to 10 deadlines. No account.',
+    plusPlan: 'Plus',
+    plusPlanLine: 'No limits, sync, more cars and people. Requires sign-in and a subscription.',
+    finePrint:
+      'Without an account you stay in guest mode — all data is local. With an account you can sync and unlock Plus.'
   },
 
   cookies: {
@@ -286,9 +341,13 @@ export const copy: Copy = {
     deleteAllConfirmHint: 'Type DELETE to confirm.',
     deleteAllConfirmWord: 'DELETE',
     deletedAll: 'All data deleted.',
-    account: 'Account',
+    account: 'Account (optional)',
     signInGoogle: 'Sign in with Google',
+    signInGitHub: 'Sign in with GitHub',
+    signInEmail: 'Sign in with email',
+    signIn: 'Sign in or create account',
     signOut: 'Sign out',
+    accountIntro: 'Sign in to unlock Plus and sync. The free plan works without an account.',
     syncing: 'Syncing to cloud...',
     signedInAs: 'Signed in as',
     notifications: 'Browser notifications',
@@ -323,11 +382,16 @@ export const copy: Copy = {
 
   plus: {
     title: 'Sroknik Plus',
-    subtitle: 'More people, cars, and documents on one device.',
+    subtitle: 'More people, cars and documents. Plus unlocks every feature.',
     comingSoonBadge: 'Coming soon',
     intro:
-      'Sroknik Plus is coming soon. No date, no waitlist, no pre-payment. When it’s ready, you’ll see it here.',
-    notLockedBehindAccount: 'Plus will not be locked behind an account.',
+      'Sroknik Plus unlocks the full feature set. Purchasing requires sign-in so you can manage your subscription on any device.',
+    loginRequired: 'Sign in to unlock the Plus purchase.',
+    paymentLockedTitle: 'Purchase available after sign-in',
+    paymentLockedBody: 'Sign in with Google, GitHub, or email. Payments go through our secure payment partner.',
+    upgradeCta: 'Buy Plus',
+    upgradeComingSoon: 'Payments coming soon',
+    notLockedBehindAccount: 'The free plan stays accessible without an account.',
     compareFree: 'Free',
     comparePlus: 'Plus',
     featurePeople: (n: number): string => `${n} ${pluralPeople(n)}`,
@@ -390,10 +454,10 @@ export const copy: Copy = {
     notCollectedTitle: 'What we don’t collect',
     notCollected: [
       'National ID number',
-      'Bank data',
       'Scanned documents',
-      'Email, password, account',
-      'Analytics, ads, tracking'
+      'Analytics, ads, tracking',
+      'Payment data on the free plan',
+      'No data without consent'
     ],
     controlTitle: 'Control',
     controlBody:
@@ -408,7 +472,7 @@ export const copy: Copy = {
     dataFlowStorage: 'Stored in IndexedDB on this device',
     dataFlowOutcome: 'Never leaves your device',
     dataFlow: 'Your data stays only on this device.',
-    noServer: 'Sroknik has no server. No one but you sees your deadlines.',
+    noServer: 'On the free plan there is no server. No one but you sees your deadlines.',
     openSource: 'The code is public — you can verify every line.',
     foundBug: 'Found a bug?',
     openIssue: 'Open an issue',

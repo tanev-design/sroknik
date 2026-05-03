@@ -3,6 +3,7 @@
   import Button from '$lib/components/shared/Button.svelte';
   import PrivacyNotice from '$lib/components/shared/PrivacyNotice.svelte';
   import Signature from '$lib/components/shared/Signature.svelte';
+  import AuthSheet from '$lib/components/auth/AuthSheet.svelte';
   import { settingsStore } from '$lib/stores/settings.svelte';
   import { authStore } from '$lib/stores/auth.svelte';
   import { deadlinesStore } from '$lib/stores/deadlines.svelte';
@@ -22,6 +23,7 @@
 
   let deleteConfirm = $state('');
   let deleteMode = $state(false);
+  let authOpen = $state(false);
   let notifyPermission = $state<NotificationPermission | 'unsupported'>(
     typeof Notification === 'undefined' ? 'unsupported' : Notification.permission
   );
@@ -115,14 +117,16 @@
         <p class="text-sm text-muted">...</p>
       {:else if authStore.user}
         <p class="text-sm text-text">
-          {t.current.settings.signedInAs} <span class="font-medium">{authStore.user.email}</span>
+          {t.current.settings.signedInAs}
+          <span class="font-medium">{authStore.user.email}</span>
         </p>
         <Button variant="secondary" onclick={() => authStore.signOut()}>
           {t.current.settings.signOut}
         </Button>
       {:else}
-        <Button variant="primary" onclick={() => authStore.signInWithGoogle()}>
-          {t.current.settings.signInGoogle}
+        <p class="text-sm leading-6 text-text-soft">{t.current.settings.accountIntro}</p>
+        <Button variant="primary" onclick={() => (authOpen = true)}>
+          {t.current.settings.signIn}
         </Button>
       {/if}
     </div>
@@ -319,6 +323,15 @@
     <ul class="flex flex-col gap-2">
       <li>
         <a
+          href="/welcome"
+          class="glass-card flex min-h-[44px] items-center justify-between rounded-[var(--radius-control)] px-4 py-3 text-sm text-text hover:border-[var(--color-border-strong)]"
+        >
+          <span>{t.current.nav.welcome}</span>
+          <ChevronRight size={16} class="text-muted" aria-hidden="true" />
+        </a>
+      </li>
+      <li>
+        <a
           href="/plus"
           class="glass-card flex min-h-[44px] items-center justify-between rounded-[var(--radius-control)] px-4 py-3 text-sm text-text hover:border-[var(--color-border-strong)]"
         >
@@ -360,3 +373,5 @@
     <Signature />
   </div>
 </div>
+
+<AuthSheet open={authOpen} onOpenChange={(v) => (authOpen = v)} />

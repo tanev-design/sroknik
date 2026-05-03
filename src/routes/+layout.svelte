@@ -3,12 +3,11 @@
   import AppShell from '$lib/components/layout/AppShell.svelte';
   import BottomNav from '$lib/components/layout/BottomNav.svelte';
   import CookieNotice from '$lib/components/shared/CookieNotice.svelte';
-  import Onboarding from '$lib/components/onboarding/Onboarding.svelte';
   import ToastContainer from '$lib/components/ui/ToastContainer.svelte';
   import { settingsStore } from '$lib/stores/settings.svelte';
   import { page } from '$app/stores';
   import { browser } from '$app/environment';
-  import { onNavigate } from '$app/navigation';
+  import { goto, onNavigate } from '$app/navigation';
   import type { Snippet } from 'svelte';
 
   // Cross-route fade via View Transitions API. Browsers without support
@@ -32,9 +31,16 @@
   }
   let { children }: Props = $props();
 
-  const showOnboarding = $derived(
-    settingsStore.loaded && !settingsStore.current.onboardingDone && $page.url.pathname === '/'
-  );
+  $effect(() => {
+    if (!browser) return;
+    if (
+      settingsStore.loaded &&
+      !settingsStore.current.onboardingDone &&
+      $page.url.pathname === '/'
+    ) {
+      goto('/welcome', { replaceState: true });
+    }
+  });
 
   $effect(() => {
     if (!browser) return;
@@ -57,7 +63,3 @@
 <BottomNav />
 <CookieNotice />
 <ToastContainer />
-
-{#if showOnboarding}
-  <Onboarding />
-{/if}
