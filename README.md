@@ -68,6 +68,61 @@ Covers:
 - `import-schema.ts`: schema validation and negative cases.
 - `reminder.ts`: ICS structure, escaping, filename slugs, offset normalization.
 
+## Payment Setup (Срокник Plus)
+
+Plus is delivered via a license key issued by a Cloudflare Worker that
+listens to Stripe's `checkout.session.completed` webhook. Full end-to-end:
+
+```
+User clicks "Купи Срокник Plus"
+  → Stripe Payment Link (hosted checkout)
+  → Stripe fires checkout.session.completed
+  → Cloudflare Worker /webhook verifies signature
+  → Worker generates SRKN-XXXX-XXXX-XXXX-XXXX key
+  → Worker stores { email_hash, created, activations: 0 } in KV
+  → Worker emails the key via Resend
+  → User pastes key into Настройки → /activate
+  → Worker validates + increments device count (max 3)
+  → Browser flips settings.plan to 'plus' in IndexedDB
+```
+
+### 1. Create the KV namespace
+
+```bash
+cd workers/license
+npm install
+npx wrangler kv namespace create LICENSES
+# paste the id into wrangler.toml
+```
+
+### 2. Set secrets
+
+```bash
+npx wrangler secret put STRIPE_WEBHOOK_SECRET
+npx wrangler secret put HMAC_SECRET        # openssl rand -base64 32
+npx wrangler secret put RESEND_API_KEY
+```
+
+### 3. Deploy the Worker
+
+```bash
+npx wrangler deploy
+# note the workers.dev URL → .env VITE_LICENSE_WORKER_URL
+```
+
+### 4. Create the Stripe product + Payment Link
+
+- Dashboard → Products → **Срокник Plus**, price `4.99 EUR` / `9.99 BGN`, one-time.
+- Create a Payment Link from that product.
+- Save the link URL into `.env` as `VITE_STRIPE_PAYMENT_LINK`.
+
+### 5. Configure the Stripe webhook
+
+- Dashboard → Developers → Webhooks → Add endpoint.
+- URL: `https://sroknik-license.<YOUR_SUBDOMAIN>.workers.dev/webhook`
+- Events: `checkout.session.completed`.
+- Copy the signing secret → `wrangler secret put STRIPE_WEBHOOK_SECRET`.
+
 ## License
 
 All rights reserved. Adjust as needed before releasing.

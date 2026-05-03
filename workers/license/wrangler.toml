@@ -1,0 +1,21 @@
+name = "sroknik-license"
+main = "src/index.ts"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# KV namespace for license records and rate-limit counters.
+# Create with: npx wrangler kv namespace create LICENSES
+# Then paste the returned id below.
+[[kv_namespaces]]
+binding = "LICENSES"
+id = "REPLACE_WITH_KV_NAMESPACE_ID"
+
+[vars]
+# Locked down to the production origin. The /activate endpoint must never
+# answer with `*` — see Phase 6 security notes.
+CORS_ORIGIN = "https://sroknik.com"
+
+# Secrets are set via the Wrangler CLI, NOT stored in this file:
+#   npx wrangler secret put STRIPE_WEBHOOK_SECRET
+#   npx wrangler secret put HMAC_SECRET        # openssl rand -base64 32
+#   npx wrangler secret put RESEND_API_KEY

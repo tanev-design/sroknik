@@ -74,6 +74,14 @@ export interface AppSettings {
   plan: Plan;
   privacyMode: true;
   onboardingDone: boolean;
+  /** True once a valid Срокник Plus license has been activated on this device. */
+  plusActivated?: boolean;
+  /** Unix ms of the most recent successful activation on this device. */
+  plusActivatedAt?: number | null;
+  /** Last 4 chars of the active license key, shown in settings. */
+  plusLicenseKeyHint?: string | null;
+  /** User preference for browser notifications being enabled (separate from OS permission). */
+  browserNotificationsEnabled?: boolean;
 }
 
 export interface ExportSchema {

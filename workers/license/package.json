@@ -1,0 +1,17 @@
+{
+  "name": "sroknik-license-worker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Срокник Plus license issuance + activation worker.",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail",
+    "types": "wrangler types"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240925.0",
+    "typescript": "^5.6.3",
+    "wrangler": "^3.78.0"
+  }
+}
