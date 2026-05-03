@@ -557,10 +557,20 @@ export const copy: Copy = {
     headline: 'For people with more deadlines',
     lede:
       'The free plan is enough for one person with one car. Plus is for families, people with more vehicles, or anyone tracking more than 10 deadlines.',
+    subscriptionLabel: '\u20ac3 / month or \u20ac25 / year',
     oneTimeLabel: 'One-time payment \u00b7 No subscription',
+    planMonthly: 'Monthly subscription \u00b7 \u20ac3',
+    planYearly: 'Yearly subscription \u00b7 \u20ac25',
+    planActive: 'Plus subscription',
+    manageCta: 'Manage subscription',
+    renewsOn: (date: string): string => `Renews on ${date}.`,
+    activeUntil: (date: string): string => `Active until ${date}.`,
+    pastDueNotice: 'Payment failed. Open \u201cManage subscription\u201d to update your card.',
+    canceledNotice: 'Subscription canceled.',
+    loadingCheckout: 'Loading checkout\u2026',
     buyCta: 'Buy Sroknik Plus',
-    priceEur: '\u20ac4.99',
-    priceBgn: 'or 9.99 BGN',
+    priceEur: '\u20ac3 / mo',
+    priceBgn: 'or \u20ac25 / yr',
     stripeNote:
       'Payment is processed by Stripe. We do not see your payment details. You receive a license key by email right after paying.',
     haveKey: 'Already have a license key?',
@@ -573,6 +583,7 @@ export const copy: Copy = {
       invalidFormat: 'Key must be in the format SRKN-XXXX-XXXX-XXXX-XXXX.',
       notFound: 'Key not found.',
       revoked: 'This key has been revoked.',
+      inactive: 'Subscription is not active. Check Stripe or update your payment.',
       tooManyActivations: 'This key has reached its device limit (3).',
       rateLimited: 'Too many attempts. Try again in an hour.',
       networkError: 'Connection error. Check your internet connection.',
@@ -597,6 +608,8 @@ export const copy: Copy = {
       dataYoursBody: 'Nothing is uploaded to the cloud. Plus only raises the limits.',
       noSubTitle: 'No subscription',
       noSubBody: 'Pay once. The key works on up to 3 devices.',
+      cancelTitle: 'Cancel anytime',
+      cancelBody: 'One click in the Stripe portal — no calls, no forms.',
       noRiskTitle: 'No risk',
       noRiskBody: 'Free features stay free forever. Plus only adds on top.'
     },
@@ -613,6 +626,14 @@ export const copy: Copy = {
       {
         q: 'How do I get the key?',
         a: 'Right after payment, Stripe notifies us and the key arrives at the email address you used to pay. Keep it safe \u2014 we do not resend it.'
+      },
+      {
+        q: 'How do I cancel?',
+        a: 'From the Plus page, click \u201cManage subscription\u201d \u2014 the Stripe portal opens, and you cancel in one click. Plus stays active until the end of the period you already paid for.'
+      },
+      {
+        q: 'What is the difference between monthly and yearly?',
+        a: 'Monthly is \u20ac3 charged automatically every month. Yearly is \u20ac25 and saves \u20ac11 versus 12 monthly payments. Both unlock the exact same features.'
       },
       {
         q: 'Do you sell my data?',

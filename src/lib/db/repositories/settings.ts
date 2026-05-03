@@ -11,6 +11,11 @@ export const DEFAULT_SETTINGS: AppSettings = {
   plusActivated: false,
   plusActivatedAt: null,
   plusLicenseKeyHint: null,
+  plusLicenseKey: null,
+  plusSubscriptionStatus: null,
+  plusPriceId: null,
+  plusCurrentPeriodEnd: null,
+  plusLastValidatedAt: null,
   browserNotificationsEnabled: false
 };
 
@@ -22,6 +27,7 @@ export type ActivateErrorCode =
   | 'invalid_key'
   | 'not_found'
   | 'revoked'
+  | 'inactive'
   | 'too_many_activations'
   | 'rate_limited'
   | 'network_error'
@@ -31,6 +37,31 @@ export type ActivateErrorCode =
 export interface ActivateResult {
   ok: boolean;
   error?: ActivateErrorCode;
+}
+
+interface ActivateResponse {
+  ok?: boolean;
+  error?: string;
+  status?: string;
+  current_period_end?: number | null;
+  price_id?: string | null;
+}
+
+interface StatusResponse {
+  ok?: boolean;
+  active?: boolean;
+  status?: string;
+  current_period_end?: number | null;
+  price_id?: string | null;
+  error?: string;
+}
+
+/** Revalidate at most once every 24h to keep the worker cheap. */
+const REVALIDATE_INTERVAL_MS = 24 * 60 * 60 * 1000;
+
+function getWorkerUrl(): string | null {
+  const raw = import.meta.env.VITE_LICENSE_WORKER_URL as string | undefined;
+  return raw ? raw.replace(/\/$/, '') : null;
 }
 
 export const settingsRepo = {
@@ -65,7 +96,7 @@ export const settingsRepo = {
 
   /**
    * Activate a Срокник Plus license key against the edge Worker.
-   * Writes the Plus state into IndexedDB only on a successful response.
+   * Stores the full key locally so we can revalidate later.
    */
   async activatePlus(rawKey: string): Promise<ActivateResult> {
     const key = rawKey.trim().toUpperCase();
@@ -73,14 +104,12 @@ export const settingsRepo = {
       return { ok: false, error: 'invalid_format' };
     }
 
-    const workerUrl = import.meta.env.VITE_LICENSE_WORKER_URL as string | undefined;
-    if (!workerUrl) {
-      return { ok: false, error: 'misconfigured' };
-    }
+    const workerUrl = getWorkerUrl();
+    if (!workerUrl) return { ok: false, error: 'misconfigured' };
 
     let res: Response;
     try {
-      res = await fetch(`${workerUrl.replace(/\/$/, '')}/activate`, {
+      res = await fetch(`${workerUrl}/activate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ key })
@@ -89,9 +118,9 @@ export const settingsRepo = {
       return { ok: false, error: 'network_error' };
     }
 
-    let data: { ok?: boolean; error?: string } = {};
+    let data: ActivateResponse = {};
     try {
-      data = (await res.json()) as { ok?: boolean; error?: string };
+      data = (await res.json()) as ActivateResponse;
     } catch {
       return { ok: false, error: 'server_error' };
     }
@@ -105,7 +134,13 @@ export const settingsRepo = {
         plan: 'plus',
         plusActivated: true,
         plusActivatedAt: Date.now(),
-        plusLicenseKeyHint: key.slice(-4)
+        plusLicenseKey: key,
+        plusLicenseKeyHint: key.slice(-4),
+        plusSubscriptionStatus: (data.status as AppSettings['plusSubscriptionStatus']) ?? 'active',
+        plusPriceId: data.price_id ?? null,
+        plusCurrentPeriodEnd:
+          typeof data.current_period_end === 'number' ? data.current_period_end * 1000 : null,
+        plusLastValidatedAt: Date.now()
       });
       return { ok: true };
     }
@@ -114,6 +149,7 @@ export const settingsRepo = {
       'invalid_key',
       'not_found',
       'revoked',
+      'inactive',
       'too_many_activations',
       'rate_limited',
       'server_error'
@@ -122,5 +158,70 @@ export const settingsRepo = {
       ? (data.error as ActivateErrorCode)
       : 'server_error';
     return { ok: false, error: code };
+  },
+
+  /**
+   * Re-check the license against the worker. Downgrades the local plan if the
+   * subscription was canceled, expired, or revoked. Throttled to once per day.
+   * Safe to call on app launch — silent on network errors.
+   */
+  async revalidatePlus(force = false): Promise<void> {
+    const s = await this.get();
+    if (!s.plusActivated || !s.plusLicenseKey) return;
+
+    const workerUrl = getWorkerUrl();
+    if (!workerUrl) return;
+
+    if (!force && s.plusLastValidatedAt) {
+      if (Date.now() - s.plusLastValidatedAt < REVALIDATE_INTERVAL_MS) return;
+    }
+
+    let res: Response;
+    try {
+      res = await fetch(`${workerUrl}/status`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key: s.plusLicenseKey })
+      });
+    } catch {
+      return; // Offline — keep current state.
+    }
+
+    let data: StatusResponse = {};
+    try {
+      data = (await res.json()) as StatusResponse;
+    } catch {
+      return;
+    }
+
+    // Treat 404/inactive/revoked as authoritative downgrades. Anything else
+    // (5xx, network errors handled above) leaves the local state untouched.
+    if (res.status === 404 || data.error === 'not_found') {
+      await this.set({
+        plan: 'free',
+        plusActivated: false,
+        plusSubscriptionStatus: 'not_found' as never,
+        plusLastValidatedAt: Date.now()
+      });
+      return;
+    }
+
+    if (!data.ok) {
+      await this.set({ plusLastValidatedAt: Date.now() });
+      return;
+    }
+
+    const status = (data.status as AppSettings['plusSubscriptionStatus']) ?? 'unknown';
+    const periodEndMs =
+      typeof data.current_period_end === 'number' ? data.current_period_end * 1000 : null;
+
+    await this.set({
+      plan: data.active ? 'plus' : 'free',
+      plusActivated: !!data.active,
+      plusSubscriptionStatus: status,
+      plusPriceId: data.price_id ?? s.plusPriceId ?? null,
+      plusCurrentPeriodEnd: periodEndMs,
+      plusLastValidatedAt: Date.now()
+    });
   }
 };

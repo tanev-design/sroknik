@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import TopBar from '$lib/components/layout/TopBar.svelte';
   import { settingsStore } from '$lib/stores/settings.svelte';
   import { deadlinesStore } from '$lib/stores/deadlines.svelte';
@@ -7,10 +8,15 @@
   import { settingsRepo, type ActivateErrorCode } from '$lib/db/repositories/settings';
   import { t } from '$lib/copy/i18n.svelte';
   import { toast } from '$lib/stores/toast.svelte';
-  import { Check, Download, Lock, Shield, Zap } from 'lucide-svelte';
+  import { Check, Download, ExternalLink, Lock, Shield, Zap } from 'lucide-svelte';
 
-  const isPlus = $derived(settingsStore.current.plan === 'plus' || !!settingsStore.current.plusActivated);
+  const isPlus = $derived(
+    settingsStore.current.plan === 'plus' || !!settingsStore.current.plusActivated
+  );
   const keyHint = $derived(settingsStore.current.plusLicenseKeyHint ?? null);
+  const subStatus = $derived(settingsStore.current.plusSubscriptionStatus ?? null);
+  const periodEnd = $derived(settingsStore.current.plusCurrentPeriodEnd ?? null);
+  const priceId = $derived(settingsStore.current.plusPriceId ?? null);
 
   let licenseKey = $state('');
   let activating = $state(false);
@@ -20,6 +26,49 @@
     deadlines: deadlinesStore.active.length,
     cars: carsStore.all.length,
     people: peopleStore.all.length
+  });
+
+  // Stripe configuration injected at build time.
+  const pricingTableId = import.meta.env.VITE_STRIPE_PRICING_TABLE_ID as string | undefined;
+  const publishableKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY as string | undefined;
+  const portalUrl = import.meta.env.VITE_STRIPE_PORTAL_URL as string | undefined;
+  const monthlyPriceId = import.meta.env.VITE_STRIPE_PRICE_MONTHLY as string | undefined;
+  const yearlyPriceId = import.meta.env.VITE_STRIPE_PRICE_YEARLY as string | undefined;
+
+  // Load Stripe pricing-table script once when the embed is configured.
+  let pricingTableLoaded = $state(false);
+  onMount(() => {
+    if (!pricingTableId || !publishableKey) return;
+    const existing = document.querySelector(
+      'script[src="https://js.stripe.com/v3/pricing-table.js"]'
+    );
+    if (existing) {
+      pricingTableLoaded = true;
+      return;
+    }
+    const s = document.createElement('script');
+    s.src = 'https://js.stripe.com/v3/pricing-table.js';
+    s.async = true;
+    s.onload = () => {
+      pricingTableLoaded = true;
+    };
+    document.head.appendChild(s);
+  });
+
+  const planLabel = $derived.by(() => {
+    if (priceId && yearlyPriceId && priceId === yearlyPriceId) return t.current.plusV2.planYearly;
+    if (priceId && monthlyPriceId && priceId === monthlyPriceId) return t.current.plusV2.planMonthly;
+    return t.current.plusV2.planActive;
+  });
+
+  const renewalLabel = $derived.by(() => {
+    if (!periodEnd) return null;
+    const d = new Date(periodEnd);
+    return d.toLocaleDateString(settingsStore.current.locale, {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
   });
 
   async function activate(): Promise<void> {
@@ -36,8 +85,6 @@
     }
   }
 
-  const stripeUrl = import.meta.env.VITE_STRIPE_PAYMENT_LINK as string | undefined;
-
   const errorMessage = $derived.by(() => {
     if (!errorCode) return '';
     const map = t.current.plusV2.activateErrors;
@@ -49,6 +96,8 @@
         return map.notFound;
       case 'revoked':
         return map.revoked;
+      case 'inactive':
+        return map.inactive;
       case 'too_many_activations':
         return map.tooManyActivations;
       case 'rate_limited':
@@ -67,7 +116,7 @@
   <title>{t.current.plusV2.eyebrow} — {t.current.plusV2.headline}</title>
 </svelte:head>
 
-<TopBar title={t.current.plus.title} subtitle={t.current.plusV2.oneTimeLabel} />
+<TopBar title={t.current.plus.title} subtitle={t.current.plusV2.subscriptionLabel} />
 
 <div class="mx-auto flex max-w-2xl flex-col gap-6">
   <!-- Intro -->
@@ -85,43 +134,62 @@
   {#if isPlus}
     <!-- Already activated -->
     <div class="accent-panel rounded-[var(--radius-card)] p-5">
-      <div class="panel-content flex items-center gap-3">
-        <div class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-accent/10">
+      <div class="panel-content flex items-start gap-3">
+        <div class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent/10">
           <Check size={20} class="text-accent" aria-hidden="true" />
         </div>
         <div class="min-w-0 flex-1">
           <p class="font-medium text-text">{t.current.plusV2.activeTitle}</p>
+          <p class="mt-0.5 text-sm text-muted">{planLabel}</p>
+          {#if subStatus === 'past_due'}
+            <p class="mt-2 text-sm text-[var(--color-danger)]">
+              {t.current.plusV2.pastDueNotice}
+            </p>
+          {:else if subStatus === 'canceled'}
+            <p class="mt-2 text-sm text-muted">
+              {t.current.plusV2.canceledNotice}{#if renewalLabel}
+                {' '}{t.current.plusV2.activeUntil(renewalLabel)}
+              {/if}
+            </p>
+          {:else if renewalLabel}
+            <p class="mt-2 text-sm text-muted">
+              {t.current.plusV2.renewsOn(renewalLabel)}
+            </p>
+          {/if}
           {#if keyHint}
-            <p class="mt-0.5 text-sm text-muted">
+            <p class="mt-2 text-sm text-muted">
               {t.current.plusV2.activeKeyLabel}: <span class="font-mono">····{keyHint}</span>
             </p>
           {/if}
         </div>
       </div>
+
+      {#if portalUrl}
+        <a
+          href={portalUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="mt-4 inline-flex items-center justify-center gap-2 rounded-[var(--radius-control)] border border-border bg-bg px-4 py-2.5 text-sm font-medium text-text transition-colors hover:bg-bg/60"
+        >
+          {t.current.plusV2.manageCta}
+          <ExternalLink size={14} aria-hidden="true" />
+        </a>
+      {/if}
     </div>
   {:else}
-    <!-- Purchase CTA -->
+    <!-- Purchase -->
     <div class="glass-card rounded-[var(--radius-card)] p-5">
-      <div class="mb-4 flex items-start justify-between gap-4">
+      <div class="mb-4 flex items-baseline justify-between gap-4">
         <div>
           <p class="text-lg font-semibold text-text">{t.current.plus.title}</p>
-          <p class="text-sm text-muted">{t.current.plusV2.oneTimeLabel}</p>
-        </div>
-        <div class="shrink-0 text-right">
-          <p class="text-2xl font-semibold tabular-nums text-text">{t.current.plusV2.priceEur}</p>
-          <p class="text-xs text-muted tabular-nums">{t.current.plusV2.priceBgn}</p>
+          <p class="text-sm text-muted">{t.current.plusV2.subscriptionLabel}</p>
         </div>
       </div>
 
-      {#if stripeUrl}
-        <a
-          href={stripeUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="mb-3 block w-full rounded-[var(--radius-control)] bg-accent px-4 py-3 text-center text-sm font-medium text-white transition-colors hover:bg-accent/90 focus-visible:outline-accent"
-        >
-          {t.current.plusV2.buyCta}
-        </a>
+      {#if pricingTableId && publishableKey && pricingTableLoaded}
+        {@html `<stripe-pricing-table pricing-table-id="${pricingTableId}" publishable-key="${publishableKey}"></stripe-pricing-table>`}
+      {:else if pricingTableId && publishableKey}
+        <div class="py-8 text-center text-sm text-muted">{t.current.plusV2.loadingCheckout}</div>
       {:else}
         <button
           type="button"
@@ -132,7 +200,7 @@
         </button>
       {/if}
 
-      <p class="text-center text-xs text-muted">
+      <p class="mt-3 text-center text-xs text-muted">
         {t.current.plusV2.stripeNote}
       </p>
     </div>
@@ -213,9 +281,9 @@
     <div class="glass-card flex items-start gap-3 rounded-[var(--radius-card)] p-4">
       <Download size={18} class="mt-0.5 shrink-0 text-accent" aria-hidden="true" />
       <div>
-        <p class="text-sm font-medium text-text">{t.current.plusV2.trust.noSubTitle}</p>
+        <p class="text-sm font-medium text-text">{t.current.plusV2.trust.cancelTitle}</p>
         <p class="mt-1 text-xs leading-relaxed text-muted">
-          {t.current.plusV2.trust.noSubBody}
+          {t.current.plusV2.trust.cancelBody}
         </p>
       </div>
     </div>

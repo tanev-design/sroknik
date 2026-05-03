@@ -23,6 +23,22 @@ function ensureSubscribed(): void {
       _loaded = true;
     }
   });
+
+  // Revalidate any active Plus license against the worker once per session.
+  // Throttled internally to once per 24h. Runs after the browser is idle so
+  // it never blocks first paint, and is silent on network errors.
+  if (typeof window !== 'undefined') {
+    const kick = (): void => {
+      void settingsRepo.revalidatePlus().catch(() => {});
+    };
+    if ('requestIdleCallback' in window) {
+      (window as Window & { requestIdleCallback: (cb: () => void) => void }).requestIdleCallback(
+        kick
+      );
+    } else {
+      setTimeout(kick, 2000);
+    }
+  }
 }
 
 export const settingsStore = {

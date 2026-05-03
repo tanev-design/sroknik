@@ -80,6 +80,27 @@ export interface AppSettings {
   plusActivatedAt?: number | null;
   /** Last 4 chars of the active license key, shown in settings. */
   plusLicenseKeyHint?: string | null;
+  /** Full license key, kept locally so we can periodically revalidate against the worker. */
+  plusLicenseKey?: string | null;
+  /** Subscription status returned by the worker on the most recent revalidation. */
+  plusSubscriptionStatus?:
+    | 'active'
+    | 'trialing'
+    | 'past_due'
+    | 'canceled'
+    | 'unpaid'
+    | 'incomplete'
+    | 'incomplete_expired'
+    | 'paused'
+    | 'revoked'
+    | 'unknown'
+    | null;
+  /** Stripe price id (monthly vs yearly), used to label the plan. */
+  plusPriceId?: string | null;
+  /** Unix ms — end of the current paid period. */
+  plusCurrentPeriodEnd?: number | null;
+  /** Unix ms — last successful /status revalidation. */
+  plusLastValidatedAt?: number | null;
   /** User preference for browser notifications being enabled (separate from OS permission). */
   browserNotificationsEnabled?: boolean;
 }

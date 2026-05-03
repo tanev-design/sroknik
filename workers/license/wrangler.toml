@@ -8,7 +8,7 @@ compatibility_flags = ["nodejs_compat"]
 # Then paste the returned id below.
 [[kv_namespaces]]
 binding = "LICENSES"
-id = "REPLACE_WITH_KV_NAMESPACE_ID"
+id = "e2933e4fe9094a36bf96855333b18ecb"
 
 [vars]
 # Locked down to the production origin. The /activate endpoint must never
