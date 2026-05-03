@@ -4,6 +4,7 @@
   import PrivacyNotice from '$lib/components/shared/PrivacyNotice.svelte';
   import Signature from '$lib/components/shared/Signature.svelte';
   import { settingsStore } from '$lib/stores/settings.svelte';
+  import { authStore } from '$lib/stores/auth.svelte';
   import { deadlinesStore } from '$lib/stores/deadlines.svelte';
   import { buildExport, applyReplace, applyMerge, clearAllUserData } from '$lib/db/backup';
   import { validateImportSchema } from '$lib/logic/import-schema';
@@ -105,6 +106,28 @@
 <TopBar title={t.current.settings.title} />
 
 <div class="grid gap-6 xl:grid-cols-2">
+  <section class="glass-card rounded-[var(--radius-card)] p-5 xl:col-span-2">
+    <h2 class="mb-3 text-xs font-semibold uppercase tracking-wide text-muted">
+      {t.current.settings.account}
+    </h2>
+    <div class="flex flex-col items-start gap-3 rounded-[var(--radius-card)] border border-border bg-surface/70 p-4 md:p-5">
+      {#if authStore.loading}
+        <p class="text-sm text-muted">...</p>
+      {:else if authStore.user}
+        <p class="text-sm text-text">
+          {t.current.settings.signedInAs} <span class="font-medium">{authStore.user.email}</span>
+        </p>
+        <Button variant="secondary" onclick={() => authStore.signOut()}>
+          {t.current.settings.signOut}
+        </Button>
+      {:else}
+        <Button variant="primary" onclick={() => authStore.signInWithGoogle()}>
+          {t.current.settings.signInGoogle}
+        </Button>
+      {/if}
+    </div>
+  </section>
+
   <section class="glass-card rounded-[var(--radius-card)] p-5">
     <h2 class="mb-3 text-xs font-semibold uppercase tracking-wide text-muted">
       {t.current.settings.theme}

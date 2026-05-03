@@ -158,3 +158,27 @@ export function icsFilename(title: string, ymd: string): string {
     .slice(0, 40);
   return `sroknik-${slug || 'srok'}-${ymd}.ics`;
 }
+
+/** Build a Google Calendar web intent URL for a deadline. */
+export function buildGoogleCalendarUrl(d: Deadline): string {
+  const start = toICSDate(d.dueDate);
+  // All-day events in Google Calendar need end date to be exclusive (+1 day)
+  const end = toICSDate(addDays(d.dueDate, 1));
+  
+  const description = [
+    `Категория: ${getCategory(d.category).labelBg}`,
+    `Дата: ${formatAbsoluteDate(d.dueDate)}`,
+    d.notes ?? ''
+  ]
+    .filter(Boolean)
+    .join('\n');
+
+  const params = new URLSearchParams({
+    action: 'TEMPLATE',
+    text: d.title,
+    dates: `${start}/${end}`,
+    details: description
+  });
+
+  return `https://calendar.google.com/calendar/render?${params.toString()}`;
+}

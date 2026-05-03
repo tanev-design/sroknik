@@ -12,7 +12,7 @@
   import type { Deadline } from '$lib/types';
   import { t } from '$lib/copy/i18n.svelte';
   import { deadlinesRepo } from '$lib/db/repositories/deadlines';
-  import { buildICS, icsFilename } from '$lib/logic/reminder';
+  import { buildICS, icsFilename, buildGoogleCalendarUrl } from '$lib/logic/reminder';
   import { downloadBlob } from '$lib/utils/download';
   import { toast } from '$lib/stores/toast.svelte';
   import { getCategory, getProvider, resolveOfficialUrl } from '$lib/constants/categories';
@@ -73,6 +73,11 @@
     const ics = buildICS([deadline]);
     downloadBlob(icsFilename(deadline.title, deadline.dueDate), ics, 'text/calendar');
     toast.success(t.current.toast.exportedICS);
+  }
+
+  function openGoogleCalendar() {
+    if (!deadline) return;
+    window.open(buildGoogleCalendarUrl(deadline), '_blank', 'noopener,noreferrer');
   }
 
   const days = $derived(deadline ? getDaysRemaining(deadline.dueDate) : 0);
@@ -196,9 +201,13 @@
 
               <!-- Actions -->
               <div class="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                <Button variant="secondary" onclick={openGoogleCalendar}>
+                  <CalendarPlus size={16} aria-hidden="true" />
+                  {t.current.deadline.googleCalendar}
+                </Button>
                 <Button variant="secondary" onclick={exportICS}>
                   <CalendarPlus size={16} aria-hidden="true" />
-                  {t.current.deadline.exportICS}
+                  {t.current.deadline.appleCalendar}
                 </Button>
                 <Button variant="secondary" onclick={() => (editing = true)}>
                   <Pencil size={16} aria-hidden="true" />
