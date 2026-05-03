@@ -182,7 +182,6 @@ async function handleWebhook(
       // Do not fail the webhook if email delivery fails — Stripe will retry
       // and we do not want a duplicate key issued on retry. Record-keeping
       // of the key is the source of truth.
-      // eslint-disable-next-line no-console
       console.error('resend failed', err);
     }
   }

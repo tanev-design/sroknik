@@ -3,7 +3,6 @@
   import Logo from '$lib/components/brand/Logo.svelte';
   import Button from '$lib/components/shared/Button.svelte';
   import AuthSheet from '$lib/components/auth/AuthSheet.svelte';
-  import { authStore } from '$lib/stores/auth.svelte';
   import { settingsStore } from '$lib/stores/settings.svelte';
   import { t } from '$lib/copy/i18n.svelte';
   import {

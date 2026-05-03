@@ -28,7 +28,6 @@
 
   let { label, onClick, onQuickPick, longPressMs = 400 }: Props = $props();
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const iconMap = icons as unknown as Record<string, Component<Record<string, unknown>>>;
 
   const quickCategories = $derived.by(() => {

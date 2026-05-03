@@ -21,13 +21,11 @@ async function main(): Promise<void> {
     const pngPath = resolve(staticDir, `icon-${size}.png`);
     const svg = readFileSync(svgPath);
     await sharp(svg).resize(size, size).png({ compressionLevel: 9 }).toFile(pngPath);
-    // eslint-disable-next-line no-console
     console.log(`\u2713 icon-${size}.png`);
   }
 }
 
 main().catch((err) => {
-  // eslint-disable-next-line no-console
   console.error(err);
   process.exit(1);
 });
