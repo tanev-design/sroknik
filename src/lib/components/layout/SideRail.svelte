@@ -77,9 +77,13 @@
   aria-label={t.current.appName}
   class="glass-card hidden md:sticky md:top-3 md:flex md:h-[calc(100svh-1.5rem)] md:w-[264px] md:shrink-0 md:flex-col md:gap-7 md:rounded-[24px] md:px-5 md:py-6"
 >
-  <div class="panel-content">
+  <a
+    href="/welcome"
+    class="panel-content -m-1 rounded-[14px] p-1 transition-colors hover:bg-surface/60"
+    aria-label={t.current.nav.welcome}
+  >
     <Logo />
-  </div>
+  </a>
 
   <nav class="panel-content flex flex-col gap-1">
     {#each primary as item (item.href)}
