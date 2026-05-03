@@ -31,13 +31,17 @@
   }
   let { children }: Props = $props();
 
+  let didFirstVisitRedirect = $state(false);
+
   $effect(() => {
-    if (!browser) return;
+    if (!browser || didFirstVisitRedirect) return;
     if (
       settingsStore.loaded &&
       !settingsStore.current.onboardingDone &&
       $page.url.pathname === '/'
     ) {
+      didFirstVisitRedirect = true;
+      settingsStore.update({ onboardingDone: true });
       goto('/welcome', { replaceState: true });
     }
   });
