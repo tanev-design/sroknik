@@ -24,23 +24,33 @@
     people: peopleStore.all.length
   });
 
-  // Stripe configuration injected at build time.
-  const pricingTableId = import.meta.env.VITE_STRIPE_PRICING_TABLE_ID as string | undefined;
-  const publishableKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY as string | undefined;
-  const portalUrl = import.meta.env.VITE_STRIPE_PORTAL_URL as string | undefined;
-  const monthlyPriceId = import.meta.env.VITE_STRIPE_PRICE_MONTHLY as string | undefined;
-  const yearlyPriceId = import.meta.env.VITE_STRIPE_PRICE_YEARLY as string | undefined;
+  // Stripe configuration. Publishable key and pricing-table id are PUBLIC
+  // by Stripe design (they cannot move money, only tokenize cards) — safe to
+  // ship as defaults. Env vars override for staging/test mode.
+  const pricingTableId =
+    (import.meta.env.VITE_STRIPE_PRICING_TABLE_ID as string | undefined) ||
+    'prctbl_1TT7h84K33DXvpEKjoLQLcLK';
+  const publishableKey =
+    (import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY as string | undefined) ||
+    'pk_live_51TEdTM4K33DXvpEKkpYCHv6PuQiAWwxotcTaWHzqfClnNiyV5NaBsPaVFg17LCCQ38ZUkP7LpeOUA1T1NOeVbL8M00zGLAMh7T';
+  const portalUrl =
+    (import.meta.env.VITE_STRIPE_PORTAL_URL as string | undefined) ||
+    'https://billing.stripe.com/p/login/00w28k3LMcWGf6X9vP5ZC00';
+  const monthlyPriceId =
+    (import.meta.env.VITE_STRIPE_PRICE_MONTHLY as string | undefined) ||
+    'price_1TT64f4K33DXvpEKgll5pvhb';
+  const yearlyPriceId =
+    (import.meta.env.VITE_STRIPE_PRICE_YEARLY as string | undefined) ||
+    'price_1TT64f4K33DXvpEKQ5B5H3oI';
 
   // Load Stripe pricing-table script. The custom element upgrades in place
   // whenever the script finishes — no need to gate rendering on load state.
   onMount(() => {
-    if (pricingTableId && publishableKey) {
-      if (!document.querySelector('script[src="https://js.stripe.com/v3/pricing-table.js"]')) {
-        const s = document.createElement('script');
-        s.src = 'https://js.stripe.com/v3/pricing-table.js';
-        s.async = true;
-        document.head.appendChild(s);
-      }
+    if (!document.querySelector('script[src="https://js.stripe.com/v3/pricing-table.js"]')) {
+      const s = document.createElement('script');
+      s.src = 'https://js.stripe.com/v3/pricing-table.js';
+      s.async = true;
+      document.head.appendChild(s);
     }
 
     // Auto-activation after Stripe Checkout success. Stripe substitutes
@@ -183,17 +193,7 @@
         </div>
       </div>
 
-      {#if pricingTableId && publishableKey}
-        {@html `<stripe-pricing-table pricing-table-id="${pricingTableId}" publishable-key="${publishableKey}"></stripe-pricing-table>`}
-      {:else}
-        <button
-          type="button"
-          disabled
-          class="mb-3 block w-full cursor-not-allowed rounded-[var(--radius-control)] bg-accent/40 px-4 py-3 text-center text-sm font-medium text-white"
-        >
-          {t.current.plus.upgradeComingSoon}
-        </button>
-      {/if}
+      {@html `<stripe-pricing-table pricing-table-id="${pricingTableId}" publishable-key="${publishableKey}"></stripe-pricing-table>`}
 
       <p class="mt-3 text-center text-xs text-muted">
         {t.current.plusV2.stripeNote}
