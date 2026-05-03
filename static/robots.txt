@@ -1,2 +1,8 @@
 User-agent: *
 Allow: /
+Disallow: /settings
+Disallow: /deadlines/
+Disallow: /cars
+Disallow: /documents
+
+Sitemap: https://sroknik.com/sitemap.xml
