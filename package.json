@@ -13,10 +13,13 @@
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write .",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-    "icons": "tsx scripts/generate-icons.ts"
+    "icons": "tsx scripts/generate-icons.ts",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui"
   },
   "devDependencies": {
     "@eslint/js": "^9.14.0",
+    "@playwright/test": "^1.59.1",
     "@sveltejs/adapter-static": "^3.0.6",
     "@sveltejs/kit": "^2.8.0",
     "@sveltejs/vite-plugin-svelte": "^4.0.0",
