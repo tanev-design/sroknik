@@ -8,6 +8,7 @@
   import DeadlineDetailSheet from '$lib/components/deadline/DeadlineDetailSheet.svelte';
   import { deadlinesStore } from '$lib/stores/deadlines.svelte';
   import { sortDeadlinesByUrgency } from '$lib/logic/urgency';
+  import { markDeadlineComplete, archiveDeadline } from '$lib/logic/deadline-actions';
   import { t } from '$lib/copy/i18n.svelte';
   import { Archive, CheckCircle2, TimerReset } from 'lucide-svelte';
   import type { Deadline, DeadlineStatus } from '$lib/types';
@@ -15,8 +16,18 @@
   type Filter = 'all' | DeadlineStatus;
   let filter = $state<Filter>('active');
   let addOpen = $state(false);
+  let addCategory = $state<Deadline['category'] | undefined>(undefined);
   let detailOpen = $state(false);
   let detail = $state<Deadline | null>(null);
+
+  function openQuickAdd(id: Deadline['category']) {
+    addCategory = id;
+    addOpen = true;
+  }
+  function openAdd() {
+    addCategory = undefined;
+    addOpen = true;
+  }
 
   const filters: { id: Filter; label: string }[] = $derived([
     { id: 'all', label: t.current.deadline.filterAll },
@@ -87,20 +98,35 @@
 {#if !list.length}
   <EmptyState title={t.current.deadline.empty} illustration="deadline">
     {#snippet action()}
-      <Button onclick={() => (addOpen = true)}>{t.current.deadline.addFirst}</Button>
+      <Button onclick={openAdd}>{t.current.deadline.addFirst}</Button>
     {/snippet}
   </EmptyState>
 {:else}
   <ul class="grid gap-3 xl:grid-cols-2">
     {#each list as d (d.id)}
-      <li><DeadlineCard deadline={d} onSelect={select} /></li>
+      <li>
+        <DeadlineCard
+          deadline={d}
+          onSelect={select}
+          onComplete={markDeadlineComplete}
+          onArchive={archiveDeadline}
+        />
+      </li>
     {/each}
   </ul>
 
-  <FAB label={t.current.actions.add} onClick={() => (addOpen = true)} />
+  <FAB
+    label={t.current.actions.add}
+    onClick={openAdd}
+    onQuickPick={openQuickAdd}
+  />
 {/if}
 
-<AddDeadlineSheet bind:open={addOpen} onOpenChange={(v) => (addOpen = v)} />
+<AddDeadlineSheet
+  bind:open={addOpen}
+  initialCategory={addCategory}
+  onOpenChange={(v) => (addOpen = v)}
+/>
 <DeadlineDetailSheet
   bind:open={detailOpen}
   deadline={detail}

@@ -23,6 +23,15 @@
     >
       <span aria-hidden="true" class="absolute inset-y-0 left-0 w-1 {stripColor[item.variant]}"></span>
       <p class="ml-1 flex-1 text-sm text-text">{item.message}</p>
+      {#if item.action}
+        <button
+          type="button"
+          onclick={() => item.action?.onAction()}
+          class="shrink-0 rounded-[var(--radius-control)] px-2.5 py-1.5 text-sm font-medium text-accent hover:bg-accent-light"
+        >
+          {item.action.label}
+        </button>
+      {/if}
       <button
         type="button"
         onclick={() => toastStore.dismiss(item.id)}

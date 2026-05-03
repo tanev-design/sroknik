@@ -10,13 +10,24 @@
   import { deadlinesStore } from '$lib/stores/deadlines.svelte';
   import { documentsStore } from '$lib/stores/documents.svelte';
   import { formatTodayHeader, groupForToday, nextDeadline } from '$lib/logic/urgency';
+  import { markDeadlineComplete, archiveDeadline } from '$lib/logic/deadline-actions';
   import { t } from '$lib/copy/i18n.svelte';
   import { CalendarPlus, Car, FileText, ShieldCheck, TimerReset } from 'lucide-svelte';
   import type { Deadline } from '$lib/types';
 
   let addOpen = $state(false);
+  let addCategory = $state<Deadline['category'] | undefined>(undefined);
   let detailOpen = $state(false);
   let detail = $state<Deadline | null>(null);
+
+  function openQuickAdd(id: Deadline['category']) {
+    addCategory = id;
+    addOpen = true;
+  }
+  function openAdd() {
+    addCategory = undefined;
+    addOpen = true;
+  }
 
   const grouped = $derived(groupForToday(deadlinesStore.active));
   const next = $derived(nextDeadline(deadlinesStore.active));
@@ -132,7 +143,13 @@
         <h2 class="mb-2 text-xs font-semibold uppercase tracking-wide text-muted">
           {t.current.today.next}
         </h2>
-        <DeadlineCard deadline={next} onSelect={select} variant="primary" />
+        <DeadlineCard
+          deadline={next}
+          onSelect={select}
+          variant="primary"
+          onComplete={markDeadlineComplete}
+          onArchive={archiveDeadline}
+        />
       </section>
     {/if}
 
@@ -143,7 +160,14 @@
         </h2>
         <ul class="flex flex-col gap-2.5">
           {#each grouped.overdue as d (d.id)}
-            <li><DeadlineCard deadline={d} onSelect={select} /></li>
+            <li>
+              <DeadlineCard
+                deadline={d}
+                onSelect={select}
+                onComplete={markDeadlineComplete}
+                onArchive={archiveDeadline}
+              />
+            </li>
           {/each}
         </ul>
       </section>
@@ -156,7 +180,14 @@
         </h2>
         <ul class="flex flex-col gap-2.5">
           {#each grouped.today as d (d.id)}
-            <li><DeadlineCard deadline={d} onSelect={select} /></li>
+            <li>
+              <DeadlineCard
+                deadline={d}
+                onSelect={select}
+                onComplete={markDeadlineComplete}
+                onArchive={archiveDeadline}
+              />
+            </li>
           {/each}
         </ul>
       </section>
@@ -169,7 +200,14 @@
         </h2>
         <ul class="flex flex-col gap-2.5">
           {#each grouped.soon as d (d.id)}
-            <li><DeadlineCard deadline={d} onSelect={select} /></li>
+            <li>
+              <DeadlineCard
+                deadline={d}
+                onSelect={select}
+                onComplete={markDeadlineComplete}
+                onArchive={archiveDeadline}
+              />
+            </li>
           {/each}
         </ul>
       </section>
@@ -182,7 +220,14 @@
         </h2>
         <ul class="flex flex-col gap-2.5">
           {#each grouped.later as d (d.id)}
-            <li><DeadlineCard deadline={d} onSelect={select} /></li>
+            <li>
+              <DeadlineCard
+                deadline={d}
+                onSelect={select}
+                onComplete={markDeadlineComplete}
+                onArchive={archiveDeadline}
+              />
+            </li>
           {/each}
         </ul>
       </section>
@@ -191,7 +236,15 @@
   {/if}
 </div>
 
-<FAB label={t.current.actions.add} onClick={() => (addOpen = true)} />
+<FAB
+  label={t.current.actions.add}
+  onClick={openAdd}
+  onQuickPick={openQuickAdd}
+/>
 
-<AddDeadlineSheet bind:open={addOpen} onOpenChange={(v) => (addOpen = v)} />
+<AddDeadlineSheet
+  bind:open={addOpen}
+  initialCategory={addCategory}
+  onOpenChange={(v) => (addOpen = v)}
+/>
 <DeadlineDetailSheet bind:open={detailOpen} deadline={detail} onOpenChange={(v) => (detailOpen = v)} />

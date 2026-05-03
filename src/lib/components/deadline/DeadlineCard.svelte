@@ -12,13 +12,33 @@
   import { peopleStore } from '$lib/stores/people.svelte';
   import NumberTicker from '$lib/components/ui/NumberTicker.svelte';
 
+  import { swipe, vibrate } from '$lib/actions/swipe';
+
   interface Props {
     deadline: Deadline;
     onSelect?: (d: Deadline) => void;
     /** "primary" makes the card larger and shows a one-line note preview. */
     variant?: 'default' | 'primary';
+    /** Swipe-right handler. When provided the card accepts touch gestures. */
+    onComplete?: (d: Deadline) => void;
+    /** Swipe-left handler. When provided the card accepts touch gestures. */
+    onArchive?: (d: Deadline) => void;
   }
-  let { deadline, onSelect, variant = 'default' }: Props = $props();
+  let { deadline, onSelect, variant = 'default', onComplete, onArchive }: Props = $props();
+
+  const canSwipe = $derived(!!onComplete || !!onArchive);
+
+  function handleSwipeRight(): void {
+    if (!onComplete) return;
+    vibrate(50);
+    onComplete(deadline);
+  }
+
+  function handleSwipeLeft(): void {
+    if (!onArchive) return;
+    vibrate([10, 50, 10]);
+    onArchive(deadline);
+  }
 
   const days = $derived(getDaysRemaining(deadline.dueDate));
   const urgency = $derived(getUrgency(days));
@@ -73,6 +93,12 @@
   type="button"
   disabled={!onSelect}
   onclick={() => onSelect?.(deadline)}
+  use:swipe={{
+    onSwipeRight: handleSwipeRight,
+    onSwipeLeft: handleSwipeLeft,
+    disabled: !canSwipe,
+    threshold: 60
+  }}
   class="pressable glass-card relative flex min-h-[44px] w-full items-start gap-4 rounded-[var(--radius-card)] text-left hover:border-[var(--color-border-strong)] disabled:cursor-default {onSelect
     ? 'cursor-pointer'
     : ''} {isPrimary ? 'p-5 md:p-6' : 'p-4 md:p-5'}"
