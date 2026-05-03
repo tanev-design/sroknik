@@ -12,6 +12,8 @@
   import { formatTodayHeader, groupForToday, nextDeadline } from '$lib/logic/urgency';
   import { markDeadlineComplete, archiveDeadline } from '$lib/logic/deadline-actions';
   import { t } from '$lib/copy/i18n.svelte';
+  import { onMount } from 'svelte';
+  import { browser } from '$app/environment';
   import { CalendarPlus, Car, FileText, ShieldCheck, TimerReset } from 'lucide-svelte';
   import type { Deadline } from '$lib/types';
 
@@ -28,6 +30,22 @@
     addCategory = undefined;
     addOpen = true;
   }
+
+  // Onboarding handshake: if the welcome screen requested a specific category
+  // to be pre-filled in the add sheet, honour it on first load.
+  onMount(() => {
+    if (!browser) return;
+    try {
+      const pending = sessionStorage.getItem('sroknik:addCategory');
+      if (pending) {
+        sessionStorage.removeItem('sroknik:addCategory');
+        addCategory = pending as Deadline['category'];
+        addOpen = true;
+      }
+    } catch {
+      // sessionStorage unavailable; no-op.
+    }
+  });
 
   const grouped = $derived(groupForToday(deadlinesStore.active));
   const next = $derived(nextDeadline(deadlinesStore.active));

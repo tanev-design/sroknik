@@ -26,6 +26,16 @@
     await settingsStore.update({ onboardingDone: true });
     await goto('/');
   }
+
+  async function addFirstDeadline() {
+    await settingsStore.update({ onboardingDone: true });
+    try {
+      sessionStorage.setItem('sroknik:addCategory', 'vignette');
+    } catch {
+      // sessionStorage may be blocked in private mode; fall through silently.
+    }
+    await goto('/');
+  }
 </script>
 
 <svelte:head>
@@ -49,11 +59,14 @@
           {t.current.welcome.heroBody}
         </p>
         <div class="mt-7 flex flex-wrap gap-2.5">
-          <Button onclick={openDashboard}>
+          <Button onclick={addFirstDeadline}>
             <CalendarCheck size={16} aria-hidden="true" />
+            {t.current.onboardingV2.step1.cta}
+          </Button>
+          <Button variant="secondary" onclick={openDashboard}>
             {t.current.welcome.primaryCta}
           </Button>
-          <Button variant="secondary" onclick={() => (authOpen = true)}>
+          <Button variant="ghost" onclick={() => (authOpen = true)}>
             {t.current.welcome.secondaryCta}
           </Button>
         </div>

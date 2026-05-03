@@ -14,7 +14,8 @@
   import { toast } from '$lib/stores/toast.svelte';
   import { t } from '$lib/copy/i18n.svelte';
   import type { ExportSchema, Language, Theme } from '$lib/types';
-  import { ChevronRight } from 'lucide-svelte';
+  import { ChevronRight, Zap } from 'lucide-svelte';
+  import { carsStore } from '$lib/stores/cars.svelte';
 
   let importing = $state<{
     data: ExportSchema | null;
@@ -130,6 +131,44 @@
         </Button>
       {/if}
     </div>
+  </section>
+
+  <section class="glass-card rounded-[var(--radius-card)] p-5 xl:col-span-2">
+    <h2 class="mb-3 text-xs font-semibold uppercase tracking-wide text-muted">
+      {t.current.settingsV2.plan}
+    </h2>
+    {#if settingsStore.current.plusActivated || settingsStore.current.plan === 'plus'}
+      <div
+        class="flex items-center justify-between rounded-[var(--radius-card)] border border-[var(--color-accent-border)] bg-accent-light/60 p-4"
+      >
+        <div class="flex items-center gap-3">
+          <Zap size={16} class="text-accent" aria-hidden="true" />
+          <span class="text-sm font-medium text-text">
+            {t.current.settingsV2.planPlusActive}
+          </span>
+        </div>
+        {#if settingsStore.current.plusLicenseKeyHint}
+          <span class="font-mono text-xs text-muted">
+            ····{settingsStore.current.plusLicenseKeyHint}
+          </span>
+        {/if}
+      </div>
+    {:else}
+      <a
+        href="/plus"
+        class="group flex items-center justify-between rounded-[var(--radius-card)] border border-border bg-surface p-4 transition-colors hover:border-[var(--color-border-strong)]"
+      >
+        <div>
+          <p class="text-sm font-medium text-text">{t.current.settingsV2.planFree}</p>
+          <p class="mt-0.5 text-xs text-muted tabular-nums">
+            {t.current.settingsV2.planUsage(deadlinesStore.active.length, carsStore.all.length)}
+          </p>
+        </div>
+        <span class="text-xs font-medium text-accent group-hover:underline">
+          {t.current.settingsV2.seePlus} →
+        </span>
+      </a>
+    {/if}
   </section>
 
   <section class="glass-card rounded-[var(--radius-card)] p-5">
