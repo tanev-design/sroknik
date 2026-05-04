@@ -263,11 +263,11 @@
 
     <div class="mt-5 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
       <OfficialLinkButton
-        href="https://github.com/stoyanbtanev/sroknik"
-        label="github.com/stoyanbtanev/sroknik"
+        href="https://github.com/tanev-design/sroknik"
+        label="github.com/tanev-design/sroknik"
       />
       <OfficialLinkButton
-        href="https://github.com/stoyanbtanev/sroknik/issues"
+        href="https://github.com/tanev-design/sroknik/issues"
         label={t.current.howItWorks.openIssue}
       />
     </div>
