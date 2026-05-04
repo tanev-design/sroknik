@@ -797,7 +797,7 @@ export const copy: Copy = {
   },
 
   signature: {
-    line: 'Crafted with care by tanev.design · Plovdiv',
+    line: 'by tanev.design',
     href: 'https://tanev.design'
   },
 

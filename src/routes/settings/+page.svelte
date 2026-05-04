@@ -3,7 +3,6 @@
   import TopBar from '$lib/components/layout/TopBar.svelte';
   import Button from '$lib/components/shared/Button.svelte';
   import PrivacyNotice from '$lib/components/shared/PrivacyNotice.svelte';
-  import Signature from '$lib/components/shared/Signature.svelte';
   import { loginHref } from '$lib/auth-redirect';
   import { settingsStore } from '$lib/stores/settings.svelte';
   import { authStore } from '$lib/stores/auth.svelte';
@@ -412,7 +411,4 @@
     </ul>
   </section>
 
-  <div class="xl:col-span-2">
-    <Signature />
-  </div>
 </div>

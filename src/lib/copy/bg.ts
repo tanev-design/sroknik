@@ -795,7 +795,7 @@ export const copy = {
   },
 
   signature: {
-    line: 'Направено с внимание от tanev.design · Пловдив',
+    line: 'by tanev.design',
     href: 'https://tanev.design'
   },
 
