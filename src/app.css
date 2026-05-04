@@ -62,7 +62,9 @@
 /* Base resets scoped to Сроkник */
 html {
   -webkit-text-size-adjust: 100%;
-  text-rendering: optimizeLegibility;
+  /* `optimizeLegibility` enables expensive kerning/ligatures and is a documented
+     scroll-jank cause on mobile. Default `auto` is visually identical at body size. */
+  text-rendering: auto;
   overscroll-behavior: none;
 }
 
@@ -105,6 +107,11 @@ body {
     linear-gradient(90deg, color-mix(in srgb, var(--color-border) 18%, transparent) 1px, transparent 1px);
   background-size: 64px 64px;
   mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.38), transparent 70%);
+  /* Promote to its own compositor layer so the masked grid is rasterised once
+     and not pulled into the main scroll repaint. */
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
 }
 
 .app-panel {
@@ -136,6 +143,9 @@ body {
     linear-gradient(145deg, color-mix(in srgb, var(--color-surface) 88%, transparent), color-mix(in srgb, var(--color-elevated) 70%, transparent));
   box-shadow: var(--shadow-card);
   backdrop-filter: blur(18px);
+  /* Limit invalidation/paint scope so internal state changes don't repaint
+     the surrounding page during scroll. */
+  contain: layout paint;
 }
 
 .glass-card::before {
@@ -161,6 +171,7 @@ body {
     radial-gradient(circle at 94% 22%, color-mix(in srgb, var(--color-warning) 18%, transparent), transparent 22rem),
     linear-gradient(135deg, color-mix(in srgb, var(--color-accent-light) 88%, var(--color-surface)), color-mix(in srgb, var(--color-surface) 86%, var(--color-bg)));
   box-shadow: 0 26px 80px color-mix(in srgb, var(--color-accent) 16%, transparent);
+  contain: layout paint;
 }
 
 .accent-panel::after {
@@ -189,6 +200,7 @@ body {
   border: 1px solid color-mix(in srgb, var(--color-accent-border) 70%, var(--color-border));
   background: linear-gradient(145deg, color-mix(in srgb, var(--color-surface) 72%, transparent), color-mix(in srgb, var(--color-accent-light) 30%, transparent));
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  contain: layout paint;
 }
 
 .landing-orbit {
@@ -261,6 +273,16 @@ body {
 }
 .safe-bottom-lg {
   padding-bottom: calc(env(safe-area-inset-bottom) + 5.5rem);
+}
+
+/* Promote fixed translucent overlays (mobile bottom nav + cookie banner) onto
+   their own GPU layer so the page underneath can scroll without dragging the
+   nav into the main paint pass. The blur/translucency itself is unchanged. */
+.bottom-nav,
+.cookie-banner {
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
 }
 
 /* Focus ring — accessible, calm. iOS-style: solid 2px outline + soft halo. */

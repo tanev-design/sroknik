@@ -51,45 +51,10 @@
     window.addEventListener('resize', scheduleHeight, { passive: true });
     window.addEventListener('orientationchange', scheduleHeight, { passive: true });
 
-    const coarseTouch =
-      window.matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window;
-    let normalizer: { kill?: () => void } | undefined;
-    let idleId: number | undefined;
-    let scrollTimer: number | undefined;
-
-    if (coarseTouch) {
-      const loadScrollNormalizer = () => {
-        void Promise.all([import('gsap'), import('gsap/ScrollTrigger')]).then(([gsapModule, scrollModule]) => {
-          const gsap = gsapModule.default;
-          const ScrollTrigger = scrollModule.ScrollTrigger;
-          gsap.registerPlugin(ScrollTrigger);
-          const normalizeScroll = ScrollTrigger.normalizeScroll as unknown as (vars: {
-            allowNestedScroll: boolean;
-            syncTouch: boolean;
-          }) => { kill?: () => void };
-          normalizer = normalizeScroll({ allowNestedScroll: true, syncTouch: false });
-        });
-      };
-      const w = window as Window & {
-        requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number;
-        cancelIdleCallback?: (id: number) => void;
-      };
-      if (w.requestIdleCallback) {
-        idleId = w.requestIdleCallback(loadScrollNormalizer, { timeout: 1600 });
-      } else {
-        scrollTimer = window.setTimeout(loadScrollNormalizer, 900);
-      }
-    }
-
     return () => {
       if (resizeTimer) window.clearTimeout(resizeTimer);
-      if (scrollTimer) window.clearTimeout(scrollTimer);
-      if (idleId && 'cancelIdleCallback' in window) {
-        (window as Window & { cancelIdleCallback?: (id: number) => void }).cancelIdleCallback?.(idleId);
-      }
       window.removeEventListener('resize', scheduleHeight);
       window.removeEventListener('orientationchange', scheduleHeight);
-      normalizer?.kill?.();
     };
   });
 

@@ -944,7 +944,7 @@ export const copy = {
     peopleMetric: 'Хора / семейство',
     carsMetric: 'Коли',
     documentSetsMetric: 'Комплекти документи',
-    unlimitedMetric: 'Неограничено',
+    unlimitedMetric: 'Без лимит',
     recordsMetric: 'Срокове и комплекти',
     backupTitle: 'JSON резервно копие'
   },
