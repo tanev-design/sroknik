@@ -159,11 +159,4 @@
       </div>
     {/each}
   </nav>
-
-  <div class="panel-content mt-auto hidden rounded-[var(--radius-card)] border border-[var(--color-accent-border)] bg-accent-light/50 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] lg:block">
-    <p class="text-xs font-semibold uppercase tracking-wide text-accent">
-      {t.current.trust.cardTitle}
-    </p>
-    <p class="mt-2 text-[13px] leading-5 text-text-soft">{t.current.trust.cardBody}</p>
-  </div>
 </aside>

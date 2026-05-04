@@ -152,26 +152,4 @@
     <p class="text-sm leading-6 text-text-soft">{t.current.welcome.finePrint}</p>
   </section>
 
-  <footer
-    class="mt-2 flex flex-col items-center gap-3 border-t border-border pt-6 text-xs text-muted md:flex-row md:justify-between"
-  >
-    <p>© {new Date().getFullYear()} {t.current.appName} · sroknik.com</p>
-    <nav class="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
-      <a href="/privacy" class="hover:text-text hover:underline underline-offset-2">
-        {t.current.legal.openPrivacy}
-      </a>
-      <a href="/terms" class="hover:text-text hover:underline underline-offset-2">
-        {t.current.legal.openTerms}
-      </a>
-      <a href="/cookies" class="hover:text-text hover:underline underline-offset-2">
-        {t.current.legal.openCookies}
-      </a>
-      <a href="/legal" class="hover:text-text hover:underline underline-offset-2">
-        {t.current.nav.legal}
-      </a>
-      <a href="/how-it-works" class="hover:text-text hover:underline underline-offset-2">
-        {t.current.nav.howItWorks}
-      </a>
-    </nav>
-  </footer>
 </div>

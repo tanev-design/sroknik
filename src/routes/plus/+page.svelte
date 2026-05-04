@@ -2,10 +2,7 @@
   import { onMount } from 'svelte';
   import TopBar from '$lib/components/layout/TopBar.svelte';
   import { settingsStore } from '$lib/stores/settings.svelte';
-  import {
-    settingsRepo,
-    type ActivateErrorCode
-  } from '$lib/db/repositories/settings';
+  import { settingsRepo } from '$lib/db/repositories/settings';
   import { t } from '$lib/copy/i18n.svelte';
   import { toast } from '$lib/stores/toast.svelte';
   import {
@@ -66,9 +63,6 @@
   });
 
   let autoState = $state<'idle' | 'working' | 'failed'>('idle');
-  let licenseKey = $state('');
-  let activateState = $state<'idle' | 'working'>('idle');
-  let activateError = $state<string | null>(null);
 
   async function autoActivate(sessionId: string): Promise<void> {
     if (settingsStore.current.plusActivated) {
@@ -95,33 +89,6 @@
     const url = new URL(window.location.href);
     url.searchParams.delete('session_id');
     window.history.replaceState({}, '', url.toString());
-  }
-
-  async function activateManual(): Promise<void> {
-    activateState = 'working';
-    activateError = null;
-    const res = await settingsRepo.activatePlus(licenseKey);
-    activateState = 'idle';
-
-    if (res.ok) {
-      toast.success(t.current.plusV2.activeTitle);
-      licenseKey = '';
-      return;
-    }
-
-    activateError = errorMessage(res.error);
-  }
-
-  function errorMessage(code: ActivateErrorCode | undefined): string {
-    const errors = t.current.plusV2.activateErrors;
-    if (code === 'invalid_format') return errors.invalidFormat;
-    if (code === 'not_found' || code === 'invalid_key') return errors.notFound;
-    if (code === 'revoked') return errors.revoked;
-    if (code === 'inactive') return errors.inactive;
-    if (code === 'too_many_activations') return errors.tooManyActivations;
-    if (code === 'rate_limited') return errors.rateLimited;
-    if (code === 'network_error') return errors.networkError;
-    return errors.serverError;
   }
 
   const planLabel = $derived.by(() => {
@@ -282,37 +249,6 @@
           {t.current.plusV2.stripeNote}
         </p>
 
-        <form
-          class="mt-5 rounded-[var(--radius-control)] border border-border bg-bg/50 p-3"
-          onsubmit={(e) => {
-            e.preventDefault();
-            void activateManual();
-          }}
-        >
-          <label class="block">
-            <span class="mb-2 block text-xs font-medium uppercase tracking-wide text-muted">
-              {t.current.plusV2.haveKey}
-            </span>
-            <input
-              data-testid="plus-key-input"
-              bind:value={licenseKey}
-              placeholder={t.current.plusV2.keyPlaceholder}
-              autocomplete="off"
-              class="h-11 w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 text-sm font-medium uppercase tracking-wide text-text placeholder:text-muted focus:border-[var(--color-border-strong)] focus:outline-none"
-            />
-          </label>
-          {#if activateError}
-            <p class="mt-2 text-xs text-[var(--color-danger)]">{activateError}</p>
-          {/if}
-          <button
-            data-testid="plus-activate-button"
-            type="submit"
-            disabled={activateState === 'working'}
-            class="mt-3 inline-flex min-h-[44px] w-full items-center justify-center rounded-[var(--radius-control)] bg-accent px-4 text-sm font-semibold text-white transition-[transform,opacity] duration-100 active:scale-[0.98] active:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {activateState === 'working' ? t.current.plusV2.activating : t.current.plusV2.activateCta}
-          </button>
-        </form>
       </div>
     </section>
   {/if}
