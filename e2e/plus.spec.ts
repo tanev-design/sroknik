@@ -1,12 +1,27 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('/plus page', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem(
+        'sroknik.consent.v1',
+        JSON.stringify({
+          necessary: true,
+          analytics: false,
+          marketing: false,
+          ts: new Date().toISOString(),
+          version: 1
+        })
+      );
+    });
+  });
+
   test('renders the comparison table and activation form when not activated', async ({
     page
   }) => {
     await page.goto('/plus');
 
-    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: /Срокник Plus/i })).toBeVisible();
     await expect(page.getByTestId('plus-key-input')).toBeVisible();
     await expect(page.getByTestId('plus-activate-button')).toBeVisible();
   });

@@ -4,8 +4,6 @@
   import FAB from '$lib/components/shared/FAB.svelte';
   import Button from '$lib/components/shared/Button.svelte';
   import Skeleton from '$lib/components/ui/Skeleton.svelte';
-  import AddDeadlineSheet from '$lib/components/deadline/AddDeadlineSheet.svelte';
-  import DeadlineDetailSheet from '$lib/components/deadline/DeadlineDetailSheet.svelte';
   import { carsStore } from '$lib/stores/cars.svelte';
   import { deadlinesStore } from '$lib/stores/deadlines.svelte';
   import { documentsStore } from '$lib/stores/documents.svelte';
@@ -14,20 +12,54 @@
   import { t } from '$lib/copy/i18n.svelte';
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
-  import { CalendarPlus, Car, FileText, ShieldCheck, TimerReset } from 'lucide-svelte';
-  import type { Deadline } from '$lib/types';
+  import {
+    CalendarClock,
+    CalendarPlus,
+    Car,
+    FileText,
+    IdCard,
+    Receipt,
+    ShieldCheck,
+    TimerReset,
+    Wrench,
+    Zap
+  } from 'lucide-svelte';
+  import type { ComponentType } from 'svelte';
+  import type { Deadline, DeadlineCategory } from '$lib/types';
 
   let addOpen = $state(false);
   let addCategory = $state<Deadline['category'] | undefined>(undefined);
   let detailOpen = $state(false);
   let detail = $state<Deadline | null>(null);
+  let AddDeadlineSheetComponent = $state<ComponentType | null>(null);
+  let DeadlineDetailSheetComponent = $state<ComponentType | null>(null);
+  let addSheetPromise: Promise<void> | null = null;
+  let detailSheetPromise: Promise<void> | null = null;
 
-  function openQuickAdd(id: Deadline['category']) {
+  function ensureAddSheet() {
+    if (AddDeadlineSheetComponent) return Promise.resolve();
+    addSheetPromise ??= import('$lib/components/deadline/AddDeadlineSheet.svelte').then((module) => {
+      AddDeadlineSheetComponent = module.default as unknown as ComponentType;
+    });
+    return addSheetPromise;
+  }
+
+  function ensureDetailSheet() {
+    if (DeadlineDetailSheetComponent) return Promise.resolve();
+    detailSheetPromise ??= import('$lib/components/deadline/DeadlineDetailSheet.svelte').then((module) => {
+      DeadlineDetailSheetComponent = module.default as unknown as ComponentType;
+    });
+    return detailSheetPromise;
+  }
+
+  async function openQuickAdd(id: Deadline['category']) {
     addCategory = id;
+    await ensureAddSheet();
     addOpen = true;
   }
-  function openAdd() {
+  async function openAdd() {
     addCategory = undefined;
+    await ensureAddSheet();
     addOpen = true;
   }
 
@@ -39,8 +71,7 @@
       const pending = sessionStorage.getItem('sroknik:addCategory');
       if (pending) {
         sessionStorage.removeItem('sroknik:addCategory');
-        addCategory = pending as Deadline['category'];
-        addOpen = true;
+        void openQuickAdd(pending as Deadline['category']);
       }
     } catch {
       // sessionStorage unavailable; no-op.
@@ -54,11 +85,74 @@
     grouped.overdue.length + grouped.today.length + grouped.soon.length
   );
 
-  function select(d: Deadline) {
+  async function select(d: Deadline) {
     detail = d;
+    await ensureDetailSheet();
     detailOpen = true;
   }
+
+  const quickCategories: {
+    id: DeadlineCategory;
+    icon: ComponentType;
+    label: () => string;
+  }[] = [
+    {
+      id: 'vignette',
+      icon: Receipt,
+      label: () => t.current.todayQuickCategories.items.vignette
+    },
+    {
+      id: 'civil-liability',
+      icon: ShieldCheck,
+      label: () => t.current.todayQuickCategories.items.civilLiability
+    },
+    {
+      id: 'technical-inspection',
+      icon: Wrench,
+      label: () => t.current.todayQuickCategories.items.technicalInspection
+    },
+    {
+      id: 'id-card',
+      icon: IdCard,
+      label: () => t.current.todayQuickCategories.items.idCard
+    },
+    {
+      id: 'electricity-bill',
+      icon: Zap,
+      label: () => t.current.todayQuickCategories.items.electricityBill
+    },
+    {
+      id: 'custom',
+      icon: CalendarClock,
+      label: () => t.current.todayQuickCategories.items.custom
+    }
+  ];
+
+  const webAppJson = $derived(
+    JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'WebApplication',
+      name: t.current.appName,
+      applicationCategory: 'ProductivityApplication',
+      operatingSystem: 'Any',
+      url: 'https://sroknik.com',
+      description: t.current.seo.appDescription,
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'BGN'
+      }
+    })
+  );
 </script>
+
+<svelte:head>
+  <title>{t.current.appName} — {t.current.welcome.heroTitle}</title>
+  <meta name="description" content={t.current.seo.appDescription} />
+  <meta property="og:title" content={t.current.appName} />
+  <meta property="og:description" content={t.current.seo.appDescription} />
+  <script type="application/ld+json">{webAppJson}</script>
+</svelte:head>
 
 <TopBar title={t.current.nav.today} subtitle={formatTodayHeader()}>
   {#snippet actions()}
@@ -71,6 +165,28 @@
 </TopBar>
 
 <div class="flex flex-col gap-6 xl:gap-7">
+  <section class="glass-card rounded-[var(--radius-card)] p-4 md:p-5">
+    <div class="mb-3 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <p class="eyebrow">{t.current.todayQuickCategories.title}</p>
+        <p class="mt-1 text-sm leading-6 text-muted">{t.current.todayQuickCategories.subtitle}</p>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-6">
+      {#each quickCategories as item (item.id)}
+        {@const Icon = item.icon}
+        <button
+          type="button"
+          onclick={() => openQuickAdd(item.id)}
+          class="group flex min-h-[74px] flex-col justify-between rounded-[var(--radius-control)] border border-border bg-surface p-3 text-left transition-[border-color,background-color,transform,opacity] duration-100 hover:border-[var(--color-accent-border)] hover:bg-accent-light/40 active:scale-[0.98] active:opacity-90"
+        >
+          <Icon size={18} class="text-accent" aria-hidden="true" strokeWidth={1.8} />
+          <span class="mt-3 text-sm font-medium leading-5 text-text">{item.label()}</span>
+        </button>
+      {/each}
+    </div>
+  </section>
+
   <section
     class="accent-panel rounded-[22px] p-5 md:p-7 xl:p-9"
   >
@@ -260,9 +376,17 @@
   onQuickPick={openQuickAdd}
 />
 
-<AddDeadlineSheet
-  bind:open={addOpen}
-  initialCategory={addCategory}
-  onOpenChange={(v) => (addOpen = v)}
-/>
-<DeadlineDetailSheet bind:open={detailOpen} deadline={detail} onOpenChange={(v) => (detailOpen = v)} />
+{#if AddDeadlineSheetComponent}
+  <AddDeadlineSheetComponent
+    bind:open={addOpen}
+    initialCategory={addCategory}
+    onOpenChange={(v: boolean) => (addOpen = v)}
+  />
+{/if}
+{#if DeadlineDetailSheetComponent}
+  <DeadlineDetailSheetComponent
+    bind:open={detailOpen}
+    deadline={detail}
+    onOpenChange={(v: boolean) => (detailOpen = v)}
+  />
+{/if}

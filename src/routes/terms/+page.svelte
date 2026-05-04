@@ -1,22 +1,21 @@
 <script lang="ts">
-  import TopBar from '$lib/components/layout/TopBar.svelte';
+  import PolicyLayout from '$lib/components/legal/PolicyLayout.svelte';
   import { t } from '$lib/copy/i18n.svelte';
+
+  const sections = $derived(t.current.terms.sections);
 </script>
 
-<TopBar title={t.current.legal.termsTitle} subtitle={t.current.legal.subtitle} />
+<svelte:head>
+  <title>{t.current.seo.termsTitle}</title>
+  <meta name="description" content={t.current.seo.termsDescription} />
+  <meta property="og:title" content={t.current.seo.termsTitle} />
+  <meta property="og:description" content={t.current.seo.termsDescription} />
+</svelte:head>
 
-<div class="grid gap-4 lg:grid-cols-2">
-  <section class="glass-card rounded-[var(--radius-card)] p-5">
-    <p class="eyebrow mb-2">{t.current.legal.termsTitle}</p>
-    <p class="text-sm leading-6 text-text-soft">{t.current.legal.termsBody}</p>
-  </section>
-
-  <section
-    class="accent-panel rounded-[var(--radius-card)] p-5"
-  >
-    <div class="panel-content">
-      <p class="eyebrow mb-2">{t.current.legal.gdprTitle}</p>
-      <p class="text-sm leading-6 text-text-soft">{t.current.legal.gdprBody}</p>
-    </div>
-  </section>
-</div>
+<PolicyLayout
+  title={t.current.terms.pageTitle}
+  subtitle={t.current.terms.pageSubtitle}
+  version={t.current.terms.version}
+  lastUpdated={t.current.terms.lastUpdated}
+  {sections}
+/>

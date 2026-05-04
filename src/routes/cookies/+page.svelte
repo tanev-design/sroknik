@@ -1,27 +1,27 @@
 <script lang="ts">
-  import TopBar from '$lib/components/layout/TopBar.svelte';
+  import PolicyLayout from '$lib/components/legal/PolicyLayout.svelte';
+  import CookieSettings from '$lib/components/shared/CookieSettings.svelte';
   import { t } from '$lib/copy/i18n.svelte';
+
+  const sections = $derived(t.current.cookies.sections);
 </script>
 
-<TopBar title={t.current.cookies.title} subtitle={t.current.cookies.subtitle} />
+<svelte:head>
+  <title>{t.current.seo.cookiesTitle}</title>
+  <meta name="description" content={t.current.seo.cookiesDescription} />
+  <meta property="og:title" content={t.current.seo.cookiesTitle} />
+  <meta property="og:description" content={t.current.seo.cookiesDescription} />
+</svelte:head>
 
-<div class="grid gap-4 lg:grid-cols-3">
-  <section class="glass-card rounded-[var(--radius-card)] p-5">
-    <p class="eyebrow mb-2">{t.current.cookies.necessaryTitle}</p>
-    <p class="text-sm leading-6 text-text-soft">{t.current.cookies.necessaryBody}</p>
+<PolicyLayout
+  title={t.current.cookies.title}
+  subtitle={t.current.cookies.subtitle}
+  version={t.current.cookies.version}
+  lastUpdated={t.current.cookies.lastUpdated}
+  {sections}
+>
+  <section id="settings" class="glass-card scroll-mt-24 rounded-[var(--radius-card)] p-5 md:p-6">
+    <p class="eyebrow mb-3">{t.current.cookies.banner.reopenSettings}</p>
+    <CookieSettings />
   </section>
-
-  <section class="glass-card rounded-[var(--radius-card)] p-5">
-    <p class="eyebrow mb-2">{t.current.cookies.noOptionalTitle}</p>
-    <p class="text-sm leading-6 text-text-soft">{t.current.cookies.noOptionalBody}</p>
-  </section>
-
-  <section
-    class="accent-panel rounded-[var(--radius-card)] p-5"
-  >
-    <div class="panel-content">
-      <p class="eyebrow mb-2">{t.current.cookies.futureTitle}</p>
-      <p class="text-sm leading-6 text-text-soft">{t.current.cookies.futureBody}</p>
-    </div>
-  </section>
-</div>
+</PolicyLayout>

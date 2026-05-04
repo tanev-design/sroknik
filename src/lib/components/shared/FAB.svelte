@@ -9,10 +9,9 @@
   // Kept behind an optional prop so legacy call sites without the quick-add
   // wiring (e.g. older pages) continue to work with short-tap only.
 
-  import { Plus } from 'lucide-svelte';
-  import * as icons from 'lucide-svelte';
-  import type { Component } from 'svelte';
+  import Plus from 'lucide-svelte/icons/plus';
   import { CATEGORIES } from '$lib/constants/categories';
+  import { getCategoryIcon } from '$lib/components/icons/category-icons';
   import type { DeadlineCategory } from '$lib/types';
   import { t } from '$lib/copy/i18n.svelte';
   import { vibrate } from '$lib/actions/swipe';
@@ -27,8 +26,6 @@
   }
 
   let { label, onClick, onQuickPick, longPressMs = 400 }: Props = $props();
-
-  const iconMap = icons as unknown as Record<string, Component<Record<string, unknown>>>;
 
   const quickCategories = $derived.by(() => {
     // Pick the top 5 most generally useful categories for quick-add.
@@ -124,7 +121,7 @@
     class="pointer-events-none fixed bottom-[calc(env(safe-area-inset-bottom)+9rem)] right-4 z-50 flex flex-col-reverse items-end gap-2 md:bottom-[6.5rem] md:right-8"
   >
     {#each quickCategories as cat, i (cat.id)}
-      {@const Icon = iconMap[cat.icon] ?? iconMap.CalendarClock}
+      {@const Icon = getCategoryIcon(cat.icon)}
       {@const label = t.language === 'en' ? cat.labelEn : cat.labelBg}
       <button
         role="menuitem"

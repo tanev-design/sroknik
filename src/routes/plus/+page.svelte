@@ -2,13 +2,25 @@
   import { onMount } from 'svelte';
   import TopBar from '$lib/components/layout/TopBar.svelte';
   import { settingsStore } from '$lib/stores/settings.svelte';
-  import { deadlinesStore } from '$lib/stores/deadlines.svelte';
-  import { carsStore } from '$lib/stores/cars.svelte';
-  import { peopleStore } from '$lib/stores/people.svelte';
-  import { settingsRepo } from '$lib/db/repositories/settings';
+  import {
+    settingsRepo,
+    type ActivateErrorCode
+  } from '$lib/db/repositories/settings';
   import { t } from '$lib/copy/i18n.svelte';
   import { toast } from '$lib/stores/toast.svelte';
-  import { Check, Download, ExternalLink, Loader2, Lock, Shield, Zap } from 'lucide-svelte';
+  import {
+    Check,
+    CreditCard,
+    Download,
+    ExternalLink,
+    Infinity,
+    Loader2,
+    Lock,
+    Shield,
+    Smartphone,
+    UsersRound,
+    Zap
+  } from 'lucide-svelte';
 
   const isPlus = $derived(
     settingsStore.current.plan === 'plus' || !!settingsStore.current.plusActivated
@@ -16,12 +28,6 @@
   const subStatus = $derived(settingsStore.current.plusSubscriptionStatus ?? null);
   const periodEnd = $derived(settingsStore.current.plusCurrentPeriodEnd ?? null);
   const priceId = $derived(settingsStore.current.plusPriceId ?? null);
-
-  const usage = $derived({
-    deadlines: deadlinesStore.active.length,
-    cars: carsStore.all.length,
-    people: peopleStore.all.length
-  });
 
   // Stripe configuration. Publishable key and pricing-table id are PUBLIC
   // by Stripe design (they cannot move money, only tokenize cards) — safe to
@@ -60,6 +66,9 @@
   });
 
   let autoState = $state<'idle' | 'working' | 'failed'>('idle');
+  let licenseKey = $state('');
+  let activateState = $state<'idle' | 'working'>('idle');
+  let activateError = $state<string | null>(null);
 
   async function autoActivate(sessionId: string): Promise<void> {
     if (settingsStore.current.plusActivated) {
@@ -88,6 +97,33 @@
     window.history.replaceState({}, '', url.toString());
   }
 
+  async function activateManual(): Promise<void> {
+    activateState = 'working';
+    activateError = null;
+    const res = await settingsRepo.activatePlus(licenseKey);
+    activateState = 'idle';
+
+    if (res.ok) {
+      toast.success(t.current.plusV2.activeTitle);
+      licenseKey = '';
+      return;
+    }
+
+    activateError = errorMessage(res.error);
+  }
+
+  function errorMessage(code: ActivateErrorCode | undefined): string {
+    const errors = t.current.plusV2.activateErrors;
+    if (code === 'invalid_format') return errors.invalidFormat;
+    if (code === 'not_found' || code === 'invalid_key') return errors.notFound;
+    if (code === 'revoked') return errors.revoked;
+    if (code === 'inactive') return errors.inactive;
+    if (code === 'too_many_activations') return errors.tooManyActivations;
+    if (code === 'rate_limited') return errors.rateLimited;
+    if (code === 'network_error') return errors.networkError;
+    return errors.serverError;
+  }
+
   const planLabel = $derived.by(() => {
     if (priceId && yearlyPriceId && priceId === yearlyPriceId) return t.current.plusV2.planYearly;
     if (priceId && monthlyPriceId && priceId === monthlyPriceId) return t.current.plusV2.planMonthly;
@@ -108,21 +144,61 @@
 
 <svelte:head>
   <title>{t.current.plusV2.eyebrow} — {t.current.plusV2.headline}</title>
+  <meta name="description" content={t.current.seo.plusDescription} />
+  <meta property="og:title" content={`${t.current.plusV2.eyebrow} — ${t.current.plusV2.headline}`} />
+  <meta property="og:description" content={t.current.seo.plusDescription} />
 </svelte:head>
 
 <TopBar title={t.current.plus.title} subtitle={t.current.plusV2.subscriptionLabel} />
 
-<div class="mx-auto flex max-w-2xl flex-col gap-6">
-  <!-- Intro -->
-  <section class="flex flex-col gap-3">
-    <div class="flex items-center gap-2">
-      <Zap size={18} class="text-accent" aria-hidden="true" />
-      <span class="eyebrow">{t.current.plusV2.eyebrow}</span>
+<div class="mx-auto flex max-w-5xl flex-col gap-7">
+  <section class="accent-panel rounded-[26px] p-5 md:p-8 xl:p-10">
+    <div class="panel-content grid gap-7 lg:grid-cols-[1.02fr_0.98fr] lg:items-center">
+      <div>
+        <div class="mb-4 inline-flex min-h-[34px] items-center gap-2 rounded-full border border-[var(--color-accent-border)] bg-surface/70 px-3 text-xs font-semibold uppercase tracking-wide text-accent">
+          <Zap size={14} aria-hidden="true" />
+          {t.current.plusPremium.badge}
+        </div>
+        <p class="eyebrow mb-3">{t.current.plusPremium.eyebrow}</p>
+        <h2 class="max-w-2xl text-[32px] font-semibold leading-[1.08] tracking-tight text-text md:text-[52px]">
+          {t.current.plusPremium.headline}
+        </h2>
+        <p class="mt-5 max-w-2xl text-sm leading-7 text-text-soft md:text-base md:leading-8">
+          {t.current.plusPremium.lede}
+        </p>
+        <div class="mt-6 flex flex-wrap gap-2.5">
+          <span class="inline-flex min-h-[44px] items-center rounded-[var(--radius-control)] bg-accent px-4 text-sm font-semibold text-white">
+            {t.current.plusV2.subscriptionLabel}
+          </span>
+          <span class="inline-flex min-h-[44px] items-center rounded-[var(--radius-control)] border border-[var(--color-accent-border)] bg-surface/70 px-4 text-sm font-medium text-text">
+            {t.current.plusPremium.deviceTitle}
+          </span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <article class="metric-card rounded-[var(--radius-card)] p-4 md:p-5">
+          <UsersRound size={20} class="text-accent" aria-hidden="true" />
+          <p class="mt-4 text-3xl font-semibold tabular-nums text-text">6</p>
+          <p class="text-xs text-muted">{t.current.plusPremium.peopleMetric}</p>
+        </article>
+        <article class="metric-card rounded-[var(--radius-card)] p-4 md:p-5">
+          <Zap size={20} class="text-accent" aria-hidden="true" />
+          <p class="mt-4 text-3xl font-semibold tabular-nums text-text">5</p>
+          <p class="text-xs text-muted">{t.current.plusPremium.carsMetric}</p>
+        </article>
+        <article class="metric-card rounded-[var(--radius-card)] p-4 md:p-5">
+          <Infinity size={20} class="text-accent" aria-hidden="true" />
+          <p class="mt-4 text-2xl font-semibold text-text">{t.current.plusPremium.unlimitedMetric}</p>
+          <p class="text-xs text-muted">{t.current.plusPremium.recordsMetric}</p>
+        </article>
+        <article class="metric-card rounded-[var(--radius-card)] p-4 md:p-5">
+          <Smartphone size={20} class="text-accent" aria-hidden="true" />
+          <p class="mt-4 text-3xl font-semibold tabular-nums text-text">3</p>
+          <p class="text-xs text-muted">{t.current.plusPremium.deviceTitle}</p>
+        </article>
+      </div>
     </div>
-    <h1 class="text-2xl font-semibold text-text">{t.current.plusV2.headline}</h1>
-    <p class="text-sm leading-relaxed text-muted md:text-base">
-      {t.current.plusV2.lede}
-    </p>
   </section>
 
   {#if autoState === 'working'}
@@ -178,29 +254,95 @@
       {/if}
     </div>
   {:else}
-    <!-- Purchase -->
-    <div class="glass-card rounded-[var(--radius-card)] p-5">
-      <div class="mb-4 flex items-baseline justify-between gap-4">
-        <div>
-          <p class="text-lg font-semibold text-text">{t.current.plus.title}</p>
-          <p class="text-sm text-muted">{t.current.plusV2.subscriptionLabel}</p>
-        </div>
+    <section class="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
+      <div class="grid gap-3">
+        <article class="glass-card rounded-[var(--radius-card)] p-5">
+          <CreditCard size={18} class="text-accent" aria-hidden="true" />
+          <p class="mt-4 text-sm font-semibold text-text">{t.current.plusPremium.billingTitle}</p>
+          <p class="mt-2 text-sm leading-6 text-muted">{t.current.plusPremium.billingBody}</p>
+        </article>
+        <article class="glass-card rounded-[var(--radius-card)] p-5">
+          <Smartphone size={18} class="text-accent" aria-hidden="true" />
+          <p class="mt-4 text-sm font-semibold text-text">{t.current.plusPremium.deviceTitle}</p>
+          <p class="mt-2 text-sm leading-6 text-muted">{t.current.plusPremium.deviceBody}</p>
+        </article>
       </div>
 
-      {@html `<stripe-pricing-table pricing-table-id="${pricingTableId}" publishable-key="${publishableKey}"></stripe-pricing-table>`}
+      <div class="glass-card rounded-[var(--radius-card)] p-5">
+        <div class="mb-4 flex items-baseline justify-between gap-4">
+          <div>
+            <p class="text-lg font-semibold text-text">{t.current.plusPremium.checkoutTitle}</p>
+            <p class="text-sm text-muted">{t.current.plusV2.subscriptionLabel}</p>
+          </div>
+        </div>
 
-      <p class="mt-3 text-center text-xs text-muted">
-        {t.current.plusV2.stripeNote}
-      </p>
-    </div>
+        {@html `<stripe-pricing-table pricing-table-id="${pricingTableId}" publishable-key="${publishableKey}"></stripe-pricing-table>`}
+
+        <p class="mt-3 text-center text-xs text-muted">
+          {t.current.plusV2.stripeNote}
+        </p>
+
+        <form
+          class="mt-5 rounded-[var(--radius-control)] border border-border bg-bg/50 p-3"
+          onsubmit={(e) => {
+            e.preventDefault();
+            void activateManual();
+          }}
+        >
+          <label class="block">
+            <span class="mb-2 block text-xs font-medium uppercase tracking-wide text-muted">
+              {t.current.plusV2.haveKey}
+            </span>
+            <input
+              data-testid="plus-key-input"
+              bind:value={licenseKey}
+              placeholder={t.current.plusV2.keyPlaceholder}
+              autocomplete="off"
+              class="h-11 w-full rounded-[var(--radius-control)] border border-border bg-surface px-3 text-sm font-medium uppercase tracking-wide text-text placeholder:text-muted focus:border-[var(--color-border-strong)] focus:outline-none"
+            />
+          </label>
+          {#if activateError}
+            <p class="mt-2 text-xs text-[var(--color-danger)]">{activateError}</p>
+          {/if}
+          <button
+            data-testid="plus-activate-button"
+            type="submit"
+            disabled={activateState === 'working'}
+            class="mt-3 inline-flex min-h-[44px] w-full items-center justify-center rounded-[var(--radius-control)] bg-accent px-4 text-sm font-semibold text-white transition-[transform,opacity] duration-100 active:scale-[0.98] active:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {activateState === 'working' ? t.current.plusV2.activating : t.current.plusV2.activateCta}
+          </button>
+        </form>
+      </div>
+    </section>
   {/if}
 
-  <!-- Comparison table -->
   <section>
-    <p class="mb-3 eyebrow">{t.current.plusV2.comparisonTitle}</p>
+    <p class="mb-3 eyebrow">{t.current.plusPremium.valueTitle}</p>
+    <div class="grid gap-3 md:grid-cols-3">
+      <article class="glass-card rounded-[var(--radius-card)] p-5">
+        <Infinity size={18} class="text-accent" aria-hidden="true" />
+        <p class="mt-4 text-sm font-semibold text-text">{t.current.plusPremium.limitsTitle}</p>
+        <p class="mt-2 text-sm leading-6 text-muted">{t.current.plusPremium.limitsBody}</p>
+      </article>
+      <article class="glass-card rounded-[var(--radius-card)] p-5">
+        <Download size={18} class="text-accent" aria-hidden="true" />
+        <p class="mt-4 text-sm font-semibold text-text">{t.current.plusPremium.backupTitle}</p>
+        <p class="mt-2 text-sm leading-6 text-muted">{t.current.plusV2.trust.dataYoursBody}</p>
+      </article>
+      <article class="glass-card rounded-[var(--radius-card)] p-5">
+        <Shield size={18} class="text-accent" aria-hidden="true" />
+        <p class="mt-4 text-sm font-semibold text-text">{t.current.plusPremium.privacyTitle}</p>
+        <p class="mt-2 text-sm leading-6 text-muted">{t.current.plusPremium.privacyBody}</p>
+      </article>
+    </div>
+  </section>
+
+  <section>
+    <p class="mb-3 eyebrow">{t.current.plusPremium.comparisonTitle}</p>
     <div class="glass-card overflow-hidden rounded-[var(--radius-card)]">
       <div
-        class="grid grid-cols-3 border-b border-border px-4 py-2.5 text-xs font-medium uppercase tracking-wide text-muted"
+        class="grid grid-cols-[1.25fr_0.7fr_0.8fr] border-b border-border px-4 py-3 text-xs font-medium uppercase tracking-wide text-muted"
       >
         <span></span>
         <span class="text-center">{t.current.plusV2.colFree}</span>
@@ -208,7 +350,7 @@
       </div>
       {#each t.current.plusV2.rows as row, i (i)}
         <div
-          class="grid grid-cols-3 border-b border-border px-4 py-3 text-sm last:border-0 {i %
+          class="grid grid-cols-[1.25fr_0.7fr_0.8fr] items-center border-b border-border px-4 py-3 text-sm last:border-0 {i %
             2 ===
           0
             ? 'bg-bg/20'
@@ -217,9 +359,10 @@
           <span class="text-text">{row.label}</span>
           <span class="text-center text-muted tabular-nums">{row.free}</span>
           <span
-            class="text-center font-medium tabular-nums {row.plus === row.free
+            class="inline-flex min-h-[32px] items-center justify-center rounded-full px-2 text-center font-semibold tabular-nums {row.plus ===
+            row.free
               ? 'text-muted'
-              : 'text-accent'}"
+              : 'bg-accent-light text-accent'}"
           >
             {row.plus}
           </span>
@@ -228,36 +371,37 @@
     </div>
   </section>
 
-  <!-- Trust signals -->
-  <section class="grid grid-cols-1 gap-3 md:grid-cols-3">
-    <div class="glass-card flex items-start gap-3 rounded-[var(--radius-card)] p-4">
-      <Shield size={18} class="mt-0.5 shrink-0 text-accent" aria-hidden="true" />
-      <div>
-        <p class="text-sm font-medium text-text">{t.current.plusV2.trust.dataYoursTitle}</p>
-        <p class="mt-1 text-xs leading-relaxed text-muted">
-          {t.current.plusV2.trust.dataYoursBody}
-        </p>
+  {#if isPlus}
+    <section class="grid grid-cols-1 gap-3 md:grid-cols-3">
+      <div class="glass-card flex items-start gap-3 rounded-[var(--radius-card)] p-4">
+        <Shield size={18} class="mt-0.5 shrink-0 text-accent" aria-hidden="true" />
+        <div>
+          <p class="text-sm font-medium text-text">{t.current.plusV2.trust.dataYoursTitle}</p>
+          <p class="mt-1 text-xs leading-relaxed text-muted">
+            {t.current.plusV2.trust.dataYoursBody}
+          </p>
+        </div>
       </div>
-    </div>
-    <div class="glass-card flex items-start gap-3 rounded-[var(--radius-card)] p-4">
-      <Download size={18} class="mt-0.5 shrink-0 text-accent" aria-hidden="true" />
-      <div>
-        <p class="text-sm font-medium text-text">{t.current.plusV2.trust.cancelTitle}</p>
-        <p class="mt-1 text-xs leading-relaxed text-muted">
-          {t.current.plusV2.trust.cancelBody}
-        </p>
+      <div class="glass-card flex items-start gap-3 rounded-[var(--radius-card)] p-4">
+        <Download size={18} class="mt-0.5 shrink-0 text-accent" aria-hidden="true" />
+        <div>
+          <p class="text-sm font-medium text-text">{t.current.plusV2.trust.cancelTitle}</p>
+          <p class="mt-1 text-xs leading-relaxed text-muted">
+            {t.current.plusV2.trust.cancelBody}
+          </p>
+        </div>
       </div>
-    </div>
-    <div class="glass-card flex items-start gap-3 rounded-[var(--radius-card)] p-4">
-      <Lock size={18} class="mt-0.5 shrink-0 text-accent" aria-hidden="true" />
-      <div>
-        <p class="text-sm font-medium text-text">{t.current.plusV2.trust.noRiskTitle}</p>
-        <p class="mt-1 text-xs leading-relaxed text-muted">
-          {t.current.plusV2.trust.noRiskBody}
-        </p>
+      <div class="glass-card flex items-start gap-3 rounded-[var(--radius-card)] p-4">
+        <Lock size={18} class="mt-0.5 shrink-0 text-accent" aria-hidden="true" />
+        <div>
+          <p class="text-sm font-medium text-text">{t.current.plusV2.trust.noRiskTitle}</p>
+          <p class="mt-1 text-xs leading-relaxed text-muted">
+            {t.current.plusV2.trust.noRiskBody}
+          </p>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
+  {/if}
 
   <!-- FAQ -->
   <section>
@@ -271,10 +415,4 @@
       {/each}
     </div>
   </section>
-
-  {#if !isPlus}
-    <p class="text-center text-xs text-muted">
-      Активни: {usage.deadlines} срока · {usage.cars} коли · {usage.people} хора
-    </p>
-  {/if}
 </div>
