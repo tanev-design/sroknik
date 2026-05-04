@@ -1,4 +1,5 @@
 import { supabase } from '$lib/db/supabase';
+import { absoluteAuthRedirect } from '$lib/auth-redirect';
 import type { User, Session, AuthError } from '@supabase/supabase-js';
 
 export type AuthResult = { ok: true } | { ok: false; message: string };
@@ -34,20 +35,20 @@ class AuthStore {
     });
   }
 
-  async signInWithGoogle(): Promise<AuthResult> {
+  async signInWithGoogle(redirectTo = '/settings'): Promise<AuthResult> {
     if (!supabase) return { ok: false, message: 'auth-unavailable' };
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: window.location.origin + '/settings' }
+      options: { redirectTo: absoluteAuthRedirect(redirectTo) }
     });
     return resultFromError(error);
   }
 
-  async signInWithGitHub(): Promise<AuthResult> {
+  async signInWithGitHub(redirectTo = '/settings'): Promise<AuthResult> {
     if (!supabase) return { ok: false, message: 'auth-unavailable' };
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'github',
-      options: { redirectTo: window.location.origin + '/settings' }
+      options: { redirectTo: absoluteAuthRedirect(redirectTo) }
     });
     return resultFromError(error);
   }
@@ -58,12 +59,16 @@ class AuthStore {
     return resultFromError(error);
   }
 
-  async signUpWithEmail(email: string, password: string): Promise<AuthResult> {
+  async signUpWithEmail(
+    email: string,
+    password: string,
+    redirectTo = '/settings'
+  ): Promise<AuthResult> {
     if (!supabase) return { ok: false, message: 'auth-unavailable' };
     const { error } = await supabase.auth.signUp({
       email,
       password,
-      options: { emailRedirectTo: window.location.origin + '/settings' }
+      options: { emailRedirectTo: absoluteAuthRedirect(redirectTo) }
     });
     return resultFromError(error);
   }

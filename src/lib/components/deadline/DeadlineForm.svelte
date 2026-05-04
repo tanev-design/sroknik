@@ -47,9 +47,14 @@
 
     const nextCategory = existing?.category ?? initialCategory ?? 'custom';
     const nextProvider = existing?.providerId;
+    const language = t.language;
+    const nextLabel =
+      language === 'en' ? getCategory(nextCategory).labelEn : getCategory(nextCategory).labelBg;
     formKey = nextKey;
     category = nextCategory;
-    title = existing?.title ?? '';
+    title =
+      existing?.title ??
+      (initialCategory && nextCategory !== 'custom' ? nextLabel : '');
     dueDate = existing?.dueDate ?? '';
     reminderOffsets = existing?.reminderOffsets ?? [
       ...getCategory(nextCategory).defaultReminderOffsets

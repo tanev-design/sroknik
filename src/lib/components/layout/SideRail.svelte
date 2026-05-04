@@ -1,15 +1,19 @@
 <script lang="ts">
   import { page } from '$app/stores';
   import Logo from '$lib/components/brand/Logo.svelte';
+  import AuthAction from '$lib/components/auth/AuthAction.svelte';
   import { t } from '$lib/copy/i18n.svelte';
   import {
     CalendarDays,
     Car,
+    Cookie,
     FileText,
     Gauge,
     HelpCircle,
+    LifeBuoy,
     Scale,
     Settings,
+    ShieldCheck,
     Sparkles
   } from 'lucide-svelte';
   import type { ComponentType } from 'svelte';
@@ -24,103 +28,142 @@
       | 'settings'
       | 'plus'
       | 'howItWorks'
+      | 'privacy'
+      | 'terms'
+      | 'cookies'
+      | 'support'
       | 'legal';
     icon: ComponentType;
     match: (p: string) => boolean;
   };
 
-  const primary: Item[] = [
-    { href: '/', labelKey: 'today', icon: Gauge, match: (p) => p === '/' },
+  const groups: {
+    labelKey: 'mainGroup' | 'profileGroup' | 'infoGroup';
+    items: Item[];
+  }[] = [
     {
-      href: '/deadlines',
-      labelKey: 'deadlines',
-      icon: CalendarDays,
-      match: (p) => p.startsWith('/deadlines')
+      labelKey: 'mainGroup',
+      items: [
+        { href: '/', labelKey: 'today', icon: Gauge, match: (p) => p === '/' },
+        {
+          href: '/deadlines',
+          labelKey: 'deadlines',
+          icon: CalendarDays,
+          match: (p) => p.startsWith('/deadlines')
+        },
+        {
+          href: '/documents',
+          labelKey: 'documents',
+          icon: FileText,
+          match: (p) => p.startsWith('/documents')
+        },
+        { href: '/cars', labelKey: 'cars', icon: Car, match: (p) => p.startsWith('/cars') }
+      ]
     },
     {
-      href: '/documents',
-      labelKey: 'documents',
-      icon: FileText,
-      match: (p) => p.startsWith('/documents')
-    },
-    { href: '/cars', labelKey: 'cars', icon: Car, match: (p) => p.startsWith('/cars') }
-  ];
-
-  const secondary: Item[] = [
-    {
-      href: '/settings',
-      labelKey: 'settings',
-      icon: Settings,
-      match: (p) => p.startsWith('/settings')
+      labelKey: 'profileGroup',
+      items: [
+        {
+          href: '/settings',
+          labelKey: 'settings',
+          icon: Settings,
+          match: (p) => p.startsWith('/settings')
+        },
+        { href: '/plus', labelKey: 'plus', icon: Sparkles, match: (p) => p.startsWith('/plus') }
+      ]
     },
     {
-      href: '/how-it-works',
-      labelKey: 'howItWorks',
-      icon: HelpCircle,
-      match: (p) => p.startsWith('/how-it-works')
-    },
-    {
-      href: '/legal',
-      labelKey: 'legal',
-      icon: Scale,
-      match: (p) =>
-        p.startsWith('/legal') ||
-        p.startsWith('/privacy') ||
-        p.startsWith('/cookies') ||
-        p.startsWith('/terms')
-    },
-    { href: '/plus', labelKey: 'plus', icon: Sparkles, match: (p) => p.startsWith('/plus') }
+      labelKey: 'infoGroup',
+      items: [
+        {
+          href: '/how-it-works',
+          labelKey: 'howItWorks',
+          icon: HelpCircle,
+          match: (p) => p.startsWith('/how-it-works')
+        },
+        {
+          href: '/privacy',
+          labelKey: 'privacy',
+          icon: ShieldCheck,
+          match: (p) => p.startsWith('/privacy')
+        },
+        {
+          href: '/terms',
+          labelKey: 'terms',
+          icon: Scale,
+          match: (p) => p.startsWith('/terms')
+        },
+        {
+          href: '/cookies',
+          labelKey: 'cookies',
+          icon: Cookie,
+          match: (p) => p.startsWith('/cookies')
+        },
+        {
+          href: '/support',
+          labelKey: 'support',
+          icon: LifeBuoy,
+          match: (p) => p.startsWith('/support')
+        },
+        {
+          href: '/legal',
+          labelKey: 'legal',
+          icon: Scale,
+          match: (p) => p.startsWith('/legal')
+        }
+      ]
+    }
   ];
 </script>
 
 <aside
   aria-label={t.current.appName}
-  class="glass-card hidden md:sticky md:top-3 md:flex md:h-[calc(100svh-1.5rem)] md:w-[264px] md:shrink-0 md:flex-col md:gap-7 md:rounded-[24px] md:px-5 md:py-6"
+  class="glass-card hidden md:sticky md:top-3 md:flex md:h-[calc(var(--app-height,100svh)-1.5rem)] md:w-[88px] md:shrink-0 md:flex-col md:gap-5 md:overflow-y-auto md:rounded-[24px] md:px-3 md:py-5 lg:w-[276px] lg:px-5 lg:py-6"
 >
   <a
     href="/welcome"
-    class="panel-content -m-1 rounded-[14px] p-1 transition-colors hover:bg-surface/60"
+    class="panel-content -m-1 flex justify-center rounded-[14px] p-1 transition-colors hover:bg-surface/60 lg:justify-start"
     aria-label={t.current.nav.welcome}
   >
-    <Logo />
+    <span class="lg:hidden"><Logo compact /></span>
+    <span class="hidden lg:block"><Logo /></span>
   </a>
 
-  <nav class="panel-content flex flex-col gap-1">
-    {#each primary as item (item.href)}
-      {@const active = item.match($page.url.pathname)}
-      {@const Icon = item.icon}
-      <a
-        href={item.href}
-        aria-current={active ? 'page' : undefined}
-        class="relative flex h-12 items-center gap-3 rounded-[var(--radius-control)] px-3 text-sm transition-colors
-        {active ? 'border border-[var(--color-accent-border)] bg-accent text-white shadow-[0_14px_36px_color-mix(in_srgb,var(--color-accent)_28%,transparent)]' : 'text-text hover:bg-surface'}"
-      >
-        <Icon size={17} aria-hidden="true" strokeWidth={1.8} />
-        <span>{t.current.nav[item.labelKey]}</span>
-      </a>
+  <div class="panel-content">
+    <AuthAction variant="rail" />
+  </div>
+
+  <nav class="panel-content flex flex-col gap-5">
+    {#each groups as group (group.labelKey)}
+      <div>
+        <p class="mb-2 hidden px-3 text-[11px] font-semibold uppercase tracking-wide text-muted lg:block">
+          {t.current.nav[group.labelKey]}
+        </p>
+        <div class="flex flex-col gap-1">
+          {#each group.items as item (item.href)}
+            {@const active = item.match($page.url.pathname)}
+            {@const Icon = item.icon}
+            <a
+              href={item.href}
+              aria-current={active ? 'page' : undefined}
+              aria-label={t.current.nav[item.labelKey]}
+              title={t.current.nav[item.labelKey]}
+              class="relative flex h-11 min-h-[44px] items-center justify-center gap-3 rounded-[var(--radius-control)] px-3 text-sm transition-[transform,opacity,background-color,border-color,color] duration-100 active:scale-[0.98] active:opacity-90 lg:justify-start
+              {active ? 'border border-[var(--color-accent-border)] bg-accent text-white shadow-[0_14px_36px_color-mix(in_srgb,var(--color-accent)_28%,transparent)]' : 'text-text hover:bg-surface'}"
+            >
+              <Icon size={18} aria-hidden="true" strokeWidth={1.8} />
+              <span class="hidden truncate lg:inline">{t.current.nav[item.labelKey]}</span>
+            </a>
+          {/each}
+        </div>
+      </div>
     {/each}
   </nav>
 
-  <div class="panel-content rounded-[var(--radius-card)] border border-[var(--color-accent-border)] bg-accent-light/50 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
+  <div class="panel-content mt-auto hidden rounded-[var(--radius-card)] border border-[var(--color-accent-border)] bg-accent-light/50 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] lg:block">
     <p class="text-xs font-semibold uppercase tracking-wide text-accent">
       {t.current.trust.cardTitle}
     </p>
     <p class="mt-2 text-[13px] leading-5 text-text-soft">{t.current.trust.cardBody}</p>
-  </div>
-
-  <div class="panel-content mt-auto flex flex-col gap-1 border-t border-border pt-5">
-    {#each secondary as item (item.href)}
-      {@const active = item.match($page.url.pathname)}
-      {@const Icon = item.icon}
-      <a
-        href={item.href}
-        aria-current={active ? 'page' : undefined}
-        class="flex h-9 items-center gap-2.5 rounded-[var(--radius-control)] px-3 text-[13px] transition-colors
-        {active ? 'font-medium text-text' : 'text-muted hover:text-text'}"
-      >
-        <Icon size={15} aria-hidden="true" strokeWidth={1.8} />
-        {t.current.nav[item.labelKey]}
-      </a>
-    {/each}
   </div>
 </aside>

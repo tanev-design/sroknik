@@ -2,7 +2,7 @@
   import { goto } from '$app/navigation';
   import Logo from '$lib/components/brand/Logo.svelte';
   import Button from '$lib/components/shared/Button.svelte';
-  import AuthSheet from '$lib/components/auth/AuthSheet.svelte';
+  import { loginHref } from '$lib/auth-redirect';
   import { settingsStore } from '$lib/stores/settings.svelte';
   import { t } from '$lib/copy/i18n.svelte';
   import {
@@ -14,11 +14,14 @@
     Sparkles
   } from 'lucide-svelte';
 
-  let authOpen = $state(false);
-
   async function continueAsGuest() {
     await settingsStore.update({ onboardingDone: true });
     await goto('/');
+  }
+
+  async function openLogin() {
+    await settingsStore.update({ onboardingDone: true });
+    await goto(loginHref('/welcome'));
   }
 
   async function openDashboard() {
@@ -65,7 +68,7 @@
           <Button variant="secondary" onclick={openDashboard}>
             {t.current.welcome.primaryCta}
           </Button>
-          <Button variant="ghost" onclick={() => (authOpen = true)}>
+          <Button variant="ghost" onclick={openLogin}>
             {t.current.welcome.secondaryCta}
           </Button>
         </div>
@@ -119,9 +122,6 @@
     <article class="glass-card rounded-[var(--radius-card)] p-5 md:p-6">
       <header class="flex items-baseline justify-between">
         <p class="eyebrow">{t.current.welcome.freePlan}</p>
-        <p class="text-2xl font-semibold tabular-nums text-text">
-          {t.language === 'en' ? '0 BGN' : '0 лв.'}
-        </p>
       </header>
       <p class="mt-3 text-sm leading-6 text-text-soft">{t.current.welcome.freePlanLine}</p>
       <Button
@@ -137,16 +137,11 @@
     <article class="accent-panel rounded-[var(--radius-card)] p-5 md:p-6">
       <header class="panel-content flex items-center justify-between">
         <p class="eyebrow text-accent">{t.current.welcome.plusPlan}</p>
-        <span
-          class="rounded-full bg-accent px-2.5 py-0.5 text-xs font-medium text-white"
-        >
-          {t.current.plus.comingSoonBadge}
-        </span>
       </header>
       <p class="panel-content mt-3 text-sm leading-6 text-text-soft">
         {t.current.welcome.plusPlanLine}
       </p>
-      <Button className="mt-5 w-full" fullWidth onclick={() => (authOpen = true)}>
+      <Button className="mt-5 w-full" fullWidth onclick={openLogin}>
         <Sparkles size={16} aria-hidden="true" />
         {t.current.welcome.secondaryCta}
       </Button>
@@ -180,9 +175,3 @@
     </nav>
   </footer>
 </div>
-
-<AuthSheet
-  open={authOpen}
-  onOpenChange={(v) => (authOpen = v)}
-  onGuest={continueAsGuest}
-/>

@@ -1,27 +1,28 @@
 <script lang="ts">
-  import TopBar from '$lib/components/layout/TopBar.svelte';
+  import PolicyLayout from '$lib/components/legal/PolicyLayout.svelte';
   import PrivacyNotice from '$lib/components/shared/PrivacyNotice.svelte';
   import { t } from '$lib/copy/i18n.svelte';
+
+  const sections = $derived(t.current.privacy.sections);
 </script>
 
-<TopBar title={t.current.legal.privacyTitle} subtitle={t.current.privacy.headline} />
+<svelte:head>
+  <title>{t.current.seo.privacyTitle}</title>
+  <meta name="description" content={t.current.seo.privacyDescription} />
+  <meta property="og:title" content={t.current.seo.privacyTitle} />
+  <meta property="og:description" content={t.current.seo.privacyDescription} />
+</svelte:head>
 
-<div class="grid gap-4 lg:grid-cols-2">
-  <section
-    class="accent-panel rounded-[var(--radius-card)] p-5 lg:col-span-2"
-  >
+<PolicyLayout
+  title={t.current.privacy.pageTitle}
+  subtitle={t.current.privacy.pageSubtitle}
+  version={t.current.privacy.version}
+  lastUpdated={t.current.privacy.lastUpdated}
+  {sections}
+>
+  <section class="accent-panel rounded-[var(--radius-card)] p-5 md:p-6">
     <div class="panel-content">
       <PrivacyNotice />
     </div>
   </section>
-
-  <section class="glass-card rounded-[var(--radius-card)] p-5">
-    <p class="eyebrow mb-2">{t.current.howItWorks.onDeviceTitle}</p>
-    <p class="text-sm leading-6 text-text-soft">{t.current.howItWorks.onDeviceBody}</p>
-  </section>
-
-  <section class="glass-card rounded-[var(--radius-card)] p-5">
-    <p class="eyebrow mb-2">{t.current.howItWorks.controlTitle}</p>
-    <p class="text-sm leading-6 text-text-soft">{t.current.howItWorks.controlBody}</p>
-  </section>
-</div>
+</PolicyLayout>

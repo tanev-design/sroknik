@@ -51,7 +51,48 @@
       day: 'numeric'
     })
   );
+
+  const faqJson = $derived(
+    JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: t.current.howItWorks.onDeviceTitle,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: t.current.howItWorks.onDeviceBody
+          }
+        },
+        {
+          '@type': 'Question',
+          name: t.current.howItWorks.notCollectedTitle,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: t.current.howItWorks.notCollected.join(', ')
+          }
+        },
+        {
+          '@type': 'Question',
+          name: t.current.howItWorks.controlTitle,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: t.current.howItWorks.controlBody
+          }
+        }
+      ]
+    })
+  );
 </script>
+
+<svelte:head>
+  <title>{t.current.seo.howItWorksTitle}</title>
+  <meta name="description" content={t.current.seo.howItWorksDescription} />
+  <meta property="og:title" content={t.current.seo.howItWorksTitle} />
+  <meta property="og:description" content={t.current.seo.howItWorksDescription} />
+  <script type="application/ld+json">{faqJson}</script>
+</svelte:head>
 
 <section class="accent-panel mb-6 rounded-[24px] p-6 md:p-9">
   <div class="panel-content grid gap-8 lg:grid-cols-[1fr_0.72fr] lg:items-center">

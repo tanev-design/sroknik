@@ -1,9 +1,10 @@
 <script lang="ts">
+  import { goto } from '$app/navigation';
   import TopBar from '$lib/components/layout/TopBar.svelte';
   import Button from '$lib/components/shared/Button.svelte';
   import PrivacyNotice from '$lib/components/shared/PrivacyNotice.svelte';
   import Signature from '$lib/components/shared/Signature.svelte';
-  import AuthSheet from '$lib/components/auth/AuthSheet.svelte';
+  import { loginHref } from '$lib/auth-redirect';
   import { settingsStore } from '$lib/stores/settings.svelte';
   import { authStore } from '$lib/stores/auth.svelte';
   import { deadlinesStore } from '$lib/stores/deadlines.svelte';
@@ -24,7 +25,6 @@
 
   let deleteConfirm = $state('');
   let deleteMode = $state(false);
-  let authOpen = $state(false);
   let notifyPermission = $state<NotificationPermission | 'unsupported'>(
     typeof Notification === 'undefined' ? 'unsupported' : Notification.permission
   );
@@ -36,6 +36,10 @@
 
   function setLanguage(language: Language) {
     settingsStore.update({ language });
+  }
+
+  async function openLogin() {
+    await goto(loginHref('/settings'));
   }
 
   async function exportJSON() {
@@ -126,7 +130,7 @@
         </Button>
       {:else}
         <p class="text-sm leading-6 text-text-soft">{t.current.settings.accountIntro}</p>
-        <Button variant="primary" onclick={() => (authOpen = true)}>
+        <Button variant="primary" onclick={openLogin}>
           {t.current.settings.signIn}
         </Button>
       {/if}
@@ -412,5 +416,3 @@
     <Signature />
   </div>
 </div>
-
-<AuthSheet open={authOpen} onOpenChange={(v) => (authOpen = v)} />

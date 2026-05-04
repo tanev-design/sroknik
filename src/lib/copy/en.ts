@@ -37,9 +37,16 @@ export const copy: Copy = {
     settings: 'Settings',
     plus: 'Plus',
     howItWorks: 'Trust',
+    privacy: 'Privacy',
+    terms: 'Terms',
+    cookies: 'Cookies',
+    support: 'Contact',
     legal: 'Legal',
     welcome: 'Welcome',
-    more: 'More'
+    more: 'More',
+    mainGroup: 'Main',
+    profileGroup: 'Profile',
+    infoGroup: 'Information'
   },
 
   actions: {
@@ -50,6 +57,7 @@ export const copy: Copy = {
     save: 'Save',
     saving: 'Saving…',
     cancel: 'Cancel',
+    back: 'Back',
     close: 'Close',
     confirm: 'Confirm',
     done: 'Done',
@@ -77,6 +85,20 @@ export const copy: Copy = {
       'Add the first important date and Sroknik will organize it by date, category and link.'
   },
 
+  todayQuickCategories: {
+    title: 'Add by category',
+    subtitle: 'Pick a ready-made deadline type. The form will prefill the basics.',
+    action: 'Add',
+    items: {
+      vignette: 'Vignette',
+      civilLiability: 'Insurance',
+      technicalInspection: 'Inspection',
+      idCard: 'ID card',
+      electricityBill: 'Power',
+      custom: 'Other'
+    }
+  },
+
   dashboard: {
     overview: 'Overview',
     activeDeadlines: 'Active deadlines',
@@ -88,7 +110,7 @@ export const copy: Copy = {
       'Choose a category, date and optionally a person or car. Sroknik stores only what the reminder needs.',
     trustTitle: 'Why it is trustworthy',
     trustBody:
-      'Optional account, no national ID number, no document uploads and no ad tracking. Your data stays in this browser on this device unless you choose to sync.',
+      'Optional account, no national ID number, no document uploads and no ad tracking. Your data stays in this browser on this device.',
     legalTitle: 'Ready for a public website',
     legalBody:
       'Privacy, cookie and terms pages are included. We avoid fake certificates and explain exactly what the app does.',
@@ -147,6 +169,17 @@ export const copy: Copy = {
     filterArchived: 'Archive',
     sortByDate: 'Sort by date',
     searchPlaceholder: 'Search…'
+  },
+
+  categoryGroups: {
+    vehicles: 'Vehicles',
+    documents: 'Documents',
+    bills: 'Bills',
+    other: 'Other',
+    vehiclesHint: 'Vignette, insurance, inspection and driver’s license.',
+    documentsHint: 'ID card, passport and personal documents.',
+    billsHint: 'Power, water, internet and local taxes.',
+    otherHint: 'Everything outside the ready-made categories.'
   },
 
   add: {
@@ -209,7 +242,51 @@ export const copy: Copy = {
     localOnly: 'Your data stays on this device.',
     noCloud: 'The free plan does not store your deadlines in the cloud.',
     youDecide: 'You choose when to export or delete your data.',
-    onlyWhatNeeded: 'We do not collect data that your deadlines do not need.'
+    onlyWhatNeeded: 'We do not collect data that your deadlines do not need.',
+    pageTitle: 'Privacy',
+    pageSubtitle: 'What Sroknik processes and which rights you have.',
+    version: '1.1',
+    lastUpdated: '4 May 2026',
+    sections: [
+      {
+        id: 'who',
+        title: 'Who we are',
+        body: [
+          'Sroknik is a local app for personal deadlines. The public contact address is support@sroknik.com.',
+          'We do not publish personal team email addresses. Support and legal questions use the official address only.'
+        ]
+      },
+      {
+        id: 'data',
+        title: 'What data we collect',
+        body: [
+          'Deadlines, cars, document sets, people and settings are stored in the browser through IndexedDB and localStorage.',
+          'On the free plan this data is not sent to a Sroknik server. We do not ask for national ID numbers, scanned documents or bank details.'
+        ],
+        accent: true
+      },
+      {
+        id: 'stripe',
+        title: 'Stripe and Plus',
+        body: [
+          'Plus payments are processed by Stripe. Sroknik does not see or store your card number.',
+          'For Plus we may store minimal subscription information: status, period, price and a technical activation identifier.'
+        ]
+      },
+      {
+        id: 'rights',
+        title: 'GDPR rights',
+        body: [
+          'You have rights to access, rectification, deletion, restriction, portability and objection where those rights apply.',
+          'You can complain to the Bulgarian Commission for Personal Data Protection. You can also contact us first at support@sroknik.com.'
+        ]
+      },
+      {
+        id: 'contact',
+        title: 'Contact',
+        body: 'For privacy and data questions: support@sroknik.com.'
+      }
+    ]
   },
 
   auth: {
@@ -220,7 +297,7 @@ export const copy: Copy = {
     optional: 'Optional',
     requiredForPlus: 'Sign in to unlock Plus',
     title: 'Sign in to Sroknik',
-    subtitle: 'Sign in to sync your deadlines or unlock Plus. Optional — the free plan works without an account.',
+    subtitle: 'Sign in to unlock Plus and manage your subscription. Optional — the free plan works without an account.',
     emailField: 'Email',
     emailPlaceholder: 'you@example.com',
     passwordField: 'Password',
@@ -231,7 +308,7 @@ export const copy: Copy = {
     signUpMode: 'Create account',
     switchToSignUp: 'New to Sroknik? Create an account',
     switchToSignIn: 'Have an account? Sign in',
-    confirmEmailHint: 'We sent you a confirmation email. Check your inbox.',
+    confirmEmailHint: 'Confirmation email sent. Check your inbox.',
     invalidCredentials: 'Wrong email or password.',
     weakPassword: 'Password is too short.',
     networkError: 'No connection. Try again.',
@@ -240,10 +317,10 @@ export const copy: Copy = {
   },
 
   onboarding: {
-    step1Title: 'All important deadlines, calmly organized.',
+    step1Title: 'All important deadlines, clearly organized.',
     step1Sub: 'Cars, documents and payments, without unnecessary data.',
     step2Title: 'Account is optional.',
-    step2Sub: 'The free plan works without an account. Sign in only for Plus or sync.',
+    step2Sub: 'The free plan works without an account. Sign in only for Plus or subscription management.',
     step3Title: 'Start with your first deadline.',
     step3Sub: 'A car, document, or bill.',
     step3Cta: 'Add first deadline',
@@ -254,34 +331,34 @@ export const copy: Copy = {
   trust: {
     cardTitle: 'Local by design',
     cardBody:
-      'The free plan keeps deadlines locally. Sign-in is optional — only needed for Plus and sync.'
+      'The free plan keeps deadlines locally. Sign-in is optional — needed for Plus and subscription management.'
   },
 
   welcome: {
     eyebrow: 'Sroknik',
-    heroTitle: 'Your important deadlines, calmly in one place.',
+    heroTitle: 'Sroknik keeps your important deadlines safe.',
     heroBody:
-      'Vignette, civil liability, technical inspection, ID card, passport, and bills — Sroknik reminds you in time. Free. No account required.',
+      'Vignette, third-party motor insurance, technical inspection, ID card, passport and bills. Sroknik reminds you in time. Free. No account required.',
     primaryCta: 'Open dashboard',
     secondaryCta: 'Sign in or create account',
     guestCta: 'Continue without login',
     guestNote: 'The free plan works without an account.',
     feature1Title: 'Local by default',
     feature1Body:
-      'Deadlines are stored in your browser. Sign-in is optional and only used for sync and Plus.',
+      'Deadlines are stored in your browser. Sign-in is optional and used for Plus and subscription management.',
     feature2Title: 'Bulgarian first',
     feature2Body:
       'Categories and links to official systems are made for Bulgaria first. English is an additional language.',
-    feature3Title: 'No noise',
+    feature3Title: 'No ads or tracking',
     feature3Body:
-      'No ad cookies, no tracking, no nagging notifications. Sroknik works quietly.',
-    plansTitle: 'Two plans. One clean approach.',
+      'No tracking. No ads. No unnecessary notifications.',
+    plansTitle: 'Two plans. A clear choice.',
     freePlan: 'Free',
     freePlanLine: 'Enough for one person, one car, up to 10 deadlines. No account.',
     plusPlan: 'Plus',
-    plusPlanLine: 'No limits, sync, more cars and people. Requires sign-in and a subscription.',
+    plusPlanLine: 'More people, more cars and unlimited deadlines. Requires sign-in and a subscription.',
     finePrint:
-      'Without an account you stay in guest mode — all data is local. With an account you can sync and unlock Plus.'
+      'Without an account you stay in guest mode — all data is local. With an account you can unlock Plus.'
   },
 
   cookies: {
@@ -292,6 +369,8 @@ export const copy: Copy = {
     learnMore: 'Cookie policy',
     title: 'Cookie policy',
     subtitle: 'What is stored in the browser and why.',
+    version: '1.1',
+    lastUpdated: '4 May 2026',
     necessaryTitle: 'Necessary local storage',
     necessaryBody:
       'We use IndexedDB and localStorage to store deadlines, settings, language, archive actions and whether this notice has been shown. This is necessary for the app to work.',
@@ -300,12 +379,115 @@ export const copy: Copy = {
       'The current version has no marketing cookies, advertising identifiers, analytics or tracking pixels.',
     futureTitle: 'If analytics are added',
     futureBody:
-      'Optional cookies or similar technologies will be enabled only after a clear choice and the ability to refuse.'
+      'Optional cookies or similar technologies will be enabled only after a clear choice and the ability to refuse.',
+    banner: {
+      title: 'Cookie control',
+      body:
+        'Necessary local storage keeps the app working. Analytics and marketing are enabled only if you choose them.',
+      acceptAll: 'Accept all',
+      necessaryOnly: 'Necessary only',
+      customize: 'Customize',
+      save: 'Save choice',
+      categoryNecessary: 'Necessary',
+      categoryAnalytics: 'Analytics',
+      categoryMarketing: 'Marketing',
+      reopenSettings: 'Change consent'
+    },
+    settings: {
+      title: 'Cookie settings',
+      body: 'You can change your choice at any time.',
+      necessaryBody: 'Required for language, settings, consent and local app functionality.',
+      analyticsBody: 'Helps us understand which screens work well. Off by default.',
+      marketingBody: 'Used for campaigns and measurement. Off by default.',
+      locked: 'Always on',
+      currentState: 'Current state',
+      enabled: 'On',
+      disabled: 'Off',
+      notSet: 'No saved choice yet.',
+      lastUpdated: 'Last updated'
+    },
+    sections: [
+      {
+        id: 'what',
+        title: 'What is a cookie',
+        body:
+          'A cookie is a small browser record. Similar technologies such as localStorage and IndexedDB keep settings and app data.'
+      },
+      {
+        id: 'categories',
+        title: 'Categories',
+        body: [
+          'Necessary: language, settings, consent and local data required for the app to work.',
+          'Analytics and marketing: off by default. They are enabled only after explicit consent.'
+        ],
+        accent: true
+      },
+      {
+        id: 'current',
+        title: 'Current state',
+        body:
+          'The settings below show the consent saved in this browser. You can change it at any time.'
+      }
+    ]
+  },
+
+  terms: {
+    pageTitle: 'Terms of use',
+    pageSubtitle: 'Rules for using Sroknik and Plus.',
+    version: '1.1',
+    lastUpdated: '4 May 2026',
+    sections: [
+      {
+        id: 'service',
+        title: 'The service',
+        body: [
+          'Sroknik helps you organize personal deadlines for cars, documents, bills and other tasks.',
+          'The app does not replace official registries, institutions, providers or legal advice. Always verify critical dates with the official source.'
+        ],
+        accent: true
+      },
+      {
+        id: 'plus',
+        title: 'Plus subscription',
+        body:
+          'Plus costs €3 per month or €25 per year through Stripe. The plan adds higher limits and subscription management.'
+      },
+      {
+        id: 'refunds',
+        title: 'Cancellation and refunds',
+        body:
+          'You can cancel through Stripe. Plus remains active until the end of the paid period. For payment issues, contact support@sroknik.com.'
+      },
+      {
+        id: 'liability',
+        title: 'Liability',
+        body:
+          'Sroknik keeps the data you enter locally and calculates reminders from it. You are responsible for the accuracy of the deadlines you enter.'
+      },
+      {
+        id: 'changes',
+        title: 'Changes',
+        body:
+          'We may update these terms. The visible version and updated date show which text applies.'
+      },
+      {
+        id: 'law',
+        title: 'Applicable law',
+        body: 'Bulgarian law applies to these terms.'
+      }
+    ]
   },
 
   legal: {
     title: 'Legal information',
     subtitle: 'Transparent rules for public use.',
+    version: '1.1',
+    lastUpdated: '4 May 2026',
+    versionLabel: 'Version',
+    lastUpdatedLabel: 'Updated',
+    contentsTitle: 'Contents',
+    footerNavLabel: 'Information pages',
+    footerLocalLine: 'Data stays on the device.',
     privacyTitle: 'Privacy',
     privacyBody:
       'Sroknik is a local-first app. Deadline, car, person and document data is stored in this browser on this device and is not sent to a Sroknik server.',
@@ -315,12 +497,109 @@ export const copy: Copy = {
     cookiesTitle: 'Cookies',
     cookiesBody:
       'We do not use optional cookies. Necessary local storage supports app functionality, language and settings.',
+    supportTitle: 'Contact',
+    supportBody: 'Contact us about a problem, Plus question or legal request.',
     gdprTitle: 'GDPR approach',
     gdprBody:
-      'Data minimization, clear control, export and deletion from the device. Before public launch, a lawyer should confirm the final texts for the website operator.',
+      'Data minimization, clear control, export and deletion from the device.',
     openPrivacy: 'Privacy',
     openCookies: 'Cookies',
-    openTerms: 'Terms'
+    openTerms: 'Terms',
+    sections: [
+      {
+        id: 'imprint',
+        title: 'Imprint',
+        body: [
+          'Operator: Sroknik.',
+          'Website: sroknik.com.',
+          'Public contact: support@sroknik.com.'
+        ],
+        accent: true
+      },
+      {
+        id: 'version',
+        title: 'Document version',
+        body: 'This page is version 1.1 from 4 May 2026.'
+      },
+      {
+        id: 'contact',
+        title: 'Contact',
+        body:
+          'For support, privacy, terms and Plus: support@sroknik.com. Personal email addresses are not published.'
+      }
+    ]
+  },
+
+  support: {
+    title: 'Contact',
+    subtitle: 'Support, questions and feedback.',
+    version: '1.0',
+    lastUpdated: '4 May 2026',
+    formTitle: 'Feedback',
+    subjectLabel: 'Subject',
+    subjectPlaceholder: 'Example: Plus issue',
+    messageLabel: 'Message',
+    messagePlaceholder: 'Briefly describe what happened.',
+    sendCta: 'Send email',
+    sections: [
+      {
+        id: 'email',
+        title: 'Email',
+        body: 'The public contact address is support@sroknik.com.'
+      },
+      {
+        id: 'faq',
+        title: 'FAQ',
+        body:
+          'Check the Trust page and the Plus section first. They describe local storage, limits and payments.'
+      },
+      {
+        id: 'response',
+        title: 'Response',
+        body:
+          'Include the screen, browser and device. That makes the issue faster to verify.',
+        accent: true
+      }
+    ]
+  },
+
+  loginPage: {
+    metaTitle: 'Sign in to Sroknik',
+    metaDescription: 'Sign in to Sroknik for Plus and account management.',
+    title: 'Sign in',
+    subtitle: 'An account is needed for Plus and subscription management.',
+    eyebrow: 'Account',
+    heading: 'Sign in or create an account.',
+    body:
+      'The free plan works without sign-in. The account is used for Plus, subscription management and future account features.',
+    points: [
+      'No national ID number and no document uploads.',
+      'Payments go through Stripe.',
+      'You can continue without sign-in.'
+    ],
+    signedInTitle: 'You are signed in',
+    continueCta: 'Continue'
+  },
+
+  seo: {
+    appDescription:
+      'Sroknik keeps important car, document and bill deadlines locally in the browser.',
+    plusDescription:
+      'Sroknik Plus adds more people, cars, devices and unlimited deadlines.',
+    privacyTitle: 'Privacy | Sroknik',
+    privacyDescription:
+      'How Sroknik keeps data local, how Stripe processes Plus and which rights you have.',
+    termsTitle: 'Terms | Sroknik',
+    termsDescription: 'Rules for using Sroknik, Plus, cancellation and liability.',
+    cookiesTitle: 'Cookies | Sroknik',
+    cookiesDescription: 'Cookie categories, local storage and consent settings.',
+    legalTitle: 'Legal information | Sroknik',
+    legalDescription: 'Imprint, document version and public contact for Sroknik.',
+    supportTitle: 'Contact | Sroknik',
+    supportDescription: 'Support and feedback for Sroknik.',
+    howItWorksTitle: 'How it works | Sroknik',
+    howItWorksDescription:
+      'How Sroknik stores deadlines locally, what it does not collect and where data comes from.'
   },
 
   settings: {
@@ -347,8 +626,8 @@ export const copy: Copy = {
     signInEmail: 'Sign in with email',
     signIn: 'Sign in or create account',
     signOut: 'Sign out',
-    accountIntro: 'Sign in to unlock Plus and sync. The free plan works without an account.',
-    syncing: 'Syncing to cloud...',
+    accountIntro: 'Sign in to unlock Plus and subscription management. The free plan works without an account.',
+    syncing: 'Checking account...',
     signedInAs: 'Signed in as',
     notifications: 'Browser notifications',
     notificationsEnable: 'Enable notifications',
@@ -642,6 +921,33 @@ export const copy: Copy = {
         a: 'No. We store nothing beyond a hash of your email, used only to validate the subscription.'
       }
     ]
+  },
+
+  plusPremium: {
+    eyebrow: 'Paid plan',
+    headline: 'Plus is for more deadlines, people and devices.',
+    lede:
+      'The free plan covers the personal minimum. Plus unlocks family-scale capacity, more cars and unlimited records.',
+    badge: 'Big upgrade',
+    valueTitle: 'What you get',
+    billingTitle: 'Payment and management',
+    billingBody:
+      'Payment runs through Stripe. You manage the subscription in the Stripe portal. We do not see your card details.',
+    deviceTitle: 'Up to 3 devices',
+    deviceBody: 'Activate the license on a phone, laptop and one more device.',
+    limitsTitle: 'More capacity',
+    limitsBody: '6 people, 5 cars, unlimited deadlines and document sets.',
+    privacyTitle: 'No ads',
+    privacyBody: 'Plus does not add tracking. Deadline data stays on your device.',
+    comparisonTitle: 'The difference is immediate',
+    checkoutTitle: 'Unlock Plus',
+    includedTitle: 'Included in Plus',
+    peopleMetric: 'People / family',
+    carsMetric: 'Cars',
+    documentSetsMetric: 'Document sets',
+    unlimitedMetric: 'Unlimited',
+    recordsMetric: 'Deadlines and sets',
+    backupTitle: 'JSON backup'
   },
 
   emptyStates: {

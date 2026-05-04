@@ -2,7 +2,7 @@
 
 @theme {
   --font-sans:
-    'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, Roboto, 'Helvetica Neue', Arial,
     sans-serif;
 
   /* Base palette */
@@ -239,9 +239,9 @@ body {
 /* Focus ring — accessible, calm. iOS-style: solid 2px outline + soft halo. */
 :where(a, button, [role='button'], input, select, textarea):focus-visible {
   outline: 2px solid var(--color-accent);
-  outline-offset: 3px;
+  outline-offset: 2px;
   box-shadow: 0 0 0 6px color-mix(in srgb, var(--color-accent) 18%, transparent);
-  border-radius: 8px;
+  border-radius: 6px;
   transition:
     box-shadow var(--duration-quiet) var(--ease-quiet),
     outline-offset var(--duration-quiet) var(--ease-quiet);
@@ -262,6 +262,20 @@ body {
 button,
 [role='button'] {
   user-select: none;
+}
+
+:where(button):not(:disabled) {
+  transition:
+    transform 100ms var(--ease-apple),
+    opacity 100ms var(--ease-apple),
+    background-color var(--duration-quiet) var(--ease-quiet),
+    border-color var(--duration-quiet) var(--ease-quiet),
+    color var(--duration-quiet) var(--ease-quiet);
+}
+
+:where(button):active:not(:disabled) {
+  opacity: 0.9;
+  transform: scale(0.98);
 }
 
 /* Scrollbar polish */
@@ -302,7 +316,7 @@ input[type='date']::-webkit-calendar-picker-indicator {
 
 /* Hairline divider used between settings rows / list rows. */
 .hairline {
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
 }
 
 /* ---------- Polish layer ---------- */
@@ -317,6 +331,14 @@ input[type='date']::-webkit-calendar-picker-indicator {
 }
 .pressable:active:not(:disabled) {
   transform: scale(0.985);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .glass-card.pressable:hover,
+  .metric-card.pressable:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-card);
+  }
 }
 
 /* Urgency strip on DeadlineCard — draws in vertically on first paint. */
