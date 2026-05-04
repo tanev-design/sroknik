@@ -236,7 +236,7 @@ export const copy: Copy = {
     headline: 'Less collected data means less risk.',
     noProfile: 'Account is optional.',
     noEGN: 'No national ID number.',
-    noBankData: 'No bank data on the free plan.',
+    noBankData: 'We never collect bank data — Free or Plus.',
     noUploads: 'No document uploads.',
     noTracking: 'No analytics, no ads, no tracking.',
     localOnly: 'Your data stays on this device.',

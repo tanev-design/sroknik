@@ -1,6 +1,6 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
-  import { ArrowRight, Database, Cpu, Shield, Github } from 'lucide-svelte';
+  import { ArrowRight, Database, Cpu, Shield, Github, Lock } from 'lucide-svelte';
   import Button from '$lib/components/shared/Button.svelte';
   import OfficialLinkButton from '$lib/components/shared/OfficialLinkButton.svelte';
   import PrivacyNotice from '$lib/components/shared/PrivacyNotice.svelte';
@@ -108,9 +108,14 @@
       </div>
     </div>
 
-    <div class="landing-orbit hidden min-h-[320px] place-items-center lg:grid">
-      <div class="relative grid h-44 w-44 place-items-center rounded-full border border-[var(--color-accent-border)] bg-accent-light/50 shadow-[0_0_80px_color-mix(in_srgb,var(--color-accent)_24%,transparent)]">
-        <Shield size={72} class="text-accent" aria-hidden="true" strokeWidth={1.15} />
+    <div class="hidden min-h-[320px] place-items-center lg:grid" aria-hidden="true">
+      <div class="privacy-mark relative grid h-56 w-56 place-items-center">
+        <span class="ring ring-1"></span>
+        <span class="ring ring-2"></span>
+        <span class="ring ring-3"></span>
+        <span class="core grid h-20 w-20 place-items-center rounded-full">
+          <Lock size={28} class="text-accent" strokeWidth={1.6} />
+        </span>
       </div>
     </div>
   </div>
